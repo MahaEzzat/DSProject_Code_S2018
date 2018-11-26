@@ -4,7 +4,9 @@
 #include "Enemies\/EnemyFreezer.h"
 #include "Enemies\EnemyHealer.h"
 #include "Enemies\Enemy.h"
-
+#include "Castle\Enemyqueue.h"
+#include "Castle\Enemyheap.h"
+#include <fstream>
 #include "Castle\Castle.h"
 
 // it is the controller of the project
@@ -20,18 +22,19 @@ private:
 											// to point to the current active enemies 
 											// then pass the pointers list to the GUI function
 
-	//
-	// TODO: Add More Data Members As Needed
-	//
+	Enemyheap<MaxEnemyCount> ActiveEnemies;		//heap of Active Enemies*
+	Enemyqueue<MaxEnemyCount> InactiveEnemies; //queue of Inactive Enemies*
+	Enemyqueue<MaxEnemyCount> KilledEnemies;   //queue of kileed Enemies*
 
 public:
 	
 	Battle();
-	void AddEnemy(Enemy* Ptr);
 	Castle * GetCastle();
 	void RunSimulation();
-
-	void Just_A_Demo();	//just to show a demo and should be removed in phase1 1 & 2
+	void AddEnemy_InputFile();	//Loading data from input file into enemies queues
+	void DecrementDistALL();	//Decrement distance for all active enemies
+	void ActicvateEnemies(double t);    //Add Recent Active enemies from Inactive list to Active list
+	void Just_A_Demo();			//just to show a demo and should be removed in phase1 1 & 2
 
 	//
 	// TODO: Add More Member Functions As Needed

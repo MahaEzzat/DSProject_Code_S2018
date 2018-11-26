@@ -1,7 +1,6 @@
 #pragma once
 #include "..\Defs.h"
-#include "Enemyqueue.h"
-#include "Heap.h"
+
 
 class Tower
 {
@@ -12,9 +11,7 @@ private:
 	int EnemiesNumber;		   //active enemies number	
 	int KilledEnemiesNumber;   //killed enemies number
 
-	Heap<MaxEnemyCount/4 +1> ActiveEnemies;			   //heap of Active Enemies*
-	Enemyqueue<MaxEnemyCount / 4 + 1> InactiveEnemies; //queue of Inactive Enemies*
-	Enemyqueue<MaxEnemyCount / 4 + 1> KilledEnemies;   //queue of kileed Enemies*
+
 
 public:
 

@@ -280,7 +280,7 @@
     <ClInclude Include="Battle.h" />
     <ClInclude Include="Castle\Castle.h" />
     <ClInclude Include="Castle\Enemyqueue.h" />
-    <ClInclude Include="Castle\Heap.h" />
+    <ClInclude Include="Castle\Enemyheap.h" />
     <ClInclude Include="Castle\Tower.h" />
     <ClInclude Include="CMUgraphicsLib\auxil.h" />
     <ClInclude Include="CMUgraphicsLib\CMUgraphics.h" />
@@ -308,6 +308,7 @@
     <ClInclude Include="Enemies\EnemyFreezer.h" />
     <ClInclude Include="Enemies\EnemyHealer.h" />
     <ClInclude Include="GUI\GUI.h" />
+    <ClInclude Include="InputGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

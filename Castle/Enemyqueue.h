@@ -6,12 +6,13 @@ class Enemyqueue
 {
 public:
 	Enemyqueue();
-	bool isEmpty() const;
-	bool enqueue(const Enemy* newEntry);
-	bool dequeue(Enemy* frntEntry);
-	bool peekFront(Enemy* frntEntry)  const;
+	bool IsEmpty() const;
+	bool Enqueue(Enemy* &newEntry);
+	bool Dequeue(Enemy* &frntEntry);
+	bool PeekFront(Enemy* &frntEntry)  const;
 	void SortFD();	//sort last patch of killed enemies have enqueue recently
-	void reverseQueue();
+	int GetSize();
+	void ReverseQueue();
 	~Enemyqueue();
 
 private:
@@ -28,20 +29,20 @@ Enemyqueue<Array_Size>::Enemyqueue()
 	Last_sorted = 0;
 }
 template <int Array_Size>
-bool Enemyqueue<Array_Size>::isEmpty() const
+bool Enemyqueue<Array_Size>::IsEmpty() const
 {
 	return (size == 0);
 }
 
 template <int Array_Size>
-bool Enemyqueue<Array_Size>::enqueue(const Enemy* newEntry)
+bool Enemyqueue<Array_Size>::Enqueue(Enemy* &newEntry)
 {
 	if (size == Array_Size)
 		return false;
 
 	back++;
 	Array[back % Array_Size] = newEntry;
-	if (isEmpty())
+	if (IsEmpty())
 		front = back;
 	size++;
 	return true;
@@ -50,9 +51,9 @@ bool Enemyqueue<Array_Size>::enqueue(const Enemy* newEntry)
 
 
 template <int Array_Size>
-bool Enemyqueue<Array_Size>::dequeue(Enemy* frntEntry)
+bool Enemyqueue<Array_Size>::Dequeue(Enemy* &frntEntry)
 {
-	if (isEmpty())
+	if (IsEmpty())
 		return false;
 	
 	frntEntry = Array[front % Array_Size];
@@ -62,9 +63,9 @@ bool Enemyqueue<Array_Size>::dequeue(Enemy* frntEntry)
 }
 
 template <int Array_Size>
-bool Enemyqueue<Array_Size>::peekFront(Enemy* frntEntry)  const
+bool Enemyqueue<Array_Size>::PeekFront(Enemy* &frntEntry)  const
 {
-	if (isEmpty())
+	if (IsEmpty())
 		return false;
 
 	frntEntry = Array[front % Array_Size];
@@ -72,7 +73,7 @@ bool Enemyqueue<Array_Size>::peekFront(Enemy* frntEntry)  const
 }
 
 template <int Array_Size>
-void Enemyqueue<Array_Size>::reverseQueue()
+void Enemyqueue<Array_Size>::ReverseQueue()
 {
 	for (int i = 0; i < size/2; i++)
 	{
@@ -105,4 +106,10 @@ template <int Array_Size>
 Enemyqueue<Array_Size>::~Enemyqueue()
 {
 
+}
+
+template <int Array_Size>
+int Enemyqueue<Array_Size>::GetSize()
+{
+	return size;
 }

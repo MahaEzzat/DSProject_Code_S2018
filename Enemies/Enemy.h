@@ -5,8 +5,9 @@
 
 //Enemies colors for next phases
 //You can choose whatever colors you like for your enemies
-const color FIGHTER_CLR = DARKBLUE;
-const color HEALER_CLR = ORANGERED;
+const color FIGHTER_CLR = ORANGERED;
+const color FEEZER_CLR = CYAN;
+const color HEALER_CLR = LIGHTGREEN;
 
 
 // Enemy is the base class of each type of enemy
@@ -16,7 +17,7 @@ class Enemy
 
 protected:
 	int ID;         //Each enemy has a unique ID (sequence number)
-	color Clr = FIGHTER_CLR;	    //Color of the enemy (will be set depending on the enemy type: Paver, ...etc.)
+	color Clr;	    //Color of the enemy (will be set depending on the enemy type: Paver, ...etc.)
 	REGION Region;  //Region of this enemy
 	int Distance;	//Horizontal distance between enemy & the tower of its region
 						//Always positive (ranges from 2 to 60)
@@ -33,7 +34,7 @@ protected:
 
 
 public:
-	Enemy(REGION r_region, int d = MaxDistance);
+	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, int d = MaxDistance);
 	 ~Enemy();
 
 	color GetColor() const;
@@ -51,6 +52,7 @@ public:
 	void SetFD(double fd);
 	double GetFD() const;
 	double GetPriority() const;
+	double GetArrivalTime() const;
 	void CalPriority();
 
 	// Virtual Functions: ----------------

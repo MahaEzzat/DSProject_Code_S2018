@@ -6,7 +6,7 @@ class EnemyFighter : public Enemy
 {
 
 public:
-	EnemyFighter(REGION r_region, int d = MaxDistance);
+	EnemyFighter(int id, double t, double h, double Pow, double rld, REGION r_region, int d = MaxDistance);
 	~EnemyFighter();
 	virtual void Act();
 	virtual void Move();

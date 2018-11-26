@@ -1,9 +1,9 @@
 #include "EnemyHealer.h"
 #include <iostream>
 
-EnemyHealer::EnemyHealer(REGION r_region, int d ) : Enemy(r_region, d)
+EnemyHealer::EnemyHealer(int id, double t, double h, double Pow, double rld, REGION r_region, int d) : Enemy(id, t, h, Pow, rld, r_region, d)
 {
-	Clr = ORANGERED;
+	Clr = HEALER_CLR;
 }
 
 void EnemyHealer::Act()

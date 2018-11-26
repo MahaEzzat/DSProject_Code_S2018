@@ -237,7 +237,8 @@
     <ClInclude Include="Castle\Enemyqueue.h">
       <Filter>Castle</Filter>
     </ClInclude>
-    <ClInclude Include="Castle\Heap.h">
+    <ClInclude Include="InputGenerator.h" />
+    <ClInclude Include="Castle\Enemyheap.h">
       <Filter>Castle</Filter>
     </ClInclude>
   </ItemGroup>

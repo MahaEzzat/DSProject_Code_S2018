@@ -1,9 +1,9 @@
 #include "EnemyFreezer.h"
 #include <iostream>
 
-EnemyFreezer::EnemyFreezer(REGION r_region, int d ) : Enemy(r_region, d)
+EnemyFreezer::EnemyFreezer(int id, double t, double h, double Pow, double rld, REGION r_region, int d) : Enemy(id, t, h, Pow, rld, r_region, d)
 {
-	Clr = DARKOLIVEGREEN;
+	Clr = FEEZER_CLR;
 }
 
 void EnemyFreezer::Act()

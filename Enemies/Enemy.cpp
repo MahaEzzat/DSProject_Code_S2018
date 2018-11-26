@@ -1,9 +1,14 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(REGION r_region, int d)
+Enemy::Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, int d)
 {
 	Region = r_region;
+	ID = id;
+	T = t;
+	Health = h;
+	RLD = rld;
+	power = Pow;
 	SetDistance(d);
 }
 
@@ -64,4 +69,9 @@ double Enemy::GetPriority() const
 void Enemy::CalPriority()
 {
 	priority = Health + power + 1 / Distance;
+}
+
+double Enemy::GetArrivalTime() const
+{
+	return T;
 }

@@ -43,6 +43,7 @@ int Tower::GetKilledEnemiesNumber() const
 {
 	return KilledEnemiesNumber;
 }
+
 Tower::~Tower()
 {
 

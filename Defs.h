@@ -6,8 +6,12 @@
 #define MaxVerticalEnemies  15   // the maximum number of enemies that can be drawn
 		                        // if they are in the same region and same distance
 								// (will be drawn vertical to each other)
-#define MaxEnemyCount 300       // the maximum number of enemies the application can work on
-#define TowerInitHealth 200
+#define MaxEnemyCount 300      // the maximum number of enemies the application can work on
+#define MaxTimeStep 70		    //Maximum TimeStep for simulation Iteration
+
+int static TowerAttackCount = 50;
+int static TowerInitHealth = 200;
+int static TowerInitPower = 100;
 
 //The four regions: A, B, C , and D
 enum REGION {	
@@ -22,6 +26,12 @@ enum ENEMY_STATE {
 	Frozen,
 	Inaction,
 	Reloading
+};
+
+enum ENEMY_TYPE {
+	FIGHTER=1,
+	FREEZER=2,
+	HEALER=3
 };
 
 // The tree tower states 

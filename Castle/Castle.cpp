@@ -10,3 +10,7 @@ void Castle::SetTowerHealth(REGION TowerRegion, double h)
 {
 		Towers[TowerRegion].SetHealth(h);	
 }
+Tower* Castle::GetTowers()
+{
+	return Towers;
+}

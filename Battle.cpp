@@ -1,20 +1,12 @@
 #include "Battle.h"
-
+#include "InputGenerator.h"
+#include <ctime>
+#include <cstdlib>
 #include <iostream>
 
 Battle::Battle()
 {
 	EnemyCount = 0;
-}
-
-void Battle::AddEnemy(Enemy* Ptr)
-{
-	if (EnemyCount < MaxEnemyCount) 
-		BEnemiesForDraw[EnemyCount++] = Ptr;
-
-	// Note that this function doesn't allocate any enemy objects
-	// It only makes the first free pointer in the array
-	// points to the same enemy pointed to by "Ptr"
 }
 
 
@@ -23,13 +15,138 @@ Castle * Battle::GetCastle()
 	return &BCastle;
 }
 
+void Battle::AddEnemy_InputFile()
+{
+	string loadfilename = "input.txt";
+	fstream loadfile;
+	loadfile.open(loadfilename, ios::in);
 
+	if (loadfile)
+	{
+		int id, dist;
+		double t, h, Pow, rld;
+		REGION reg;
+		string Type;
+		ENEMY_TYPE type;
 
+		string word;
 
+		//Reading Tower Health
+		loadfile >> word; 
+		TowerInitHealth = stoi(word, 0, 10);
+
+		//Reading Tower Enemies Number
+		loadfile >> word; 
+		TowerAttackCount = stoi(word, 0, 10);
+
+		//Reading Tower Power
+		loadfile >> word; 
+		TowerInitPower = stoi(word, 0, 10);
+
+		srand(time(NULL)); // Random generator for picking 20% of Fighters as Freezers
+
+		//Reading the Sequence number
+		loadfile >> word; 
+		id = stoi(word, 0, 10);
+		do 
+		{
+			//Reading Enemy Type
+			loadfile >> word; 
+			int a = rand() % (100);
+
+			switch (stoi(word, 0, 10))
+			{
+			case 1:
+				if (a >= 15)
+					type = FIGHTER;
+				else
+					type = FREEZER;
+				break;
+			case 2:
+				type = HEALER;
+				break;
+			default:
+				break;
+			}
+
+			//Arrival Time
+			loadfile >> word; 
+			t = stod(word);
+
+			//Health
+			loadfile >> word; 
+			h = stod(word);
+			
+			//Reading Power
+			loadfile >> word; 
+			Pow = stod(word);
+
+			//Reading RLD
+			loadfile >> word; 
+			rld = stod(word);
+
+			//Reading Region
+			loadfile >> word; 
+			if (word == "A")
+				reg = A_REG;
+			else if (word == "B")
+				reg = B_REG;
+			else if (word == "C")
+				reg = C_REG;
+			else
+				reg = D_REG;
+	
+			Enemy *e;
+			switch (type)
+			{
+			case FREEZER:
+				e = new EnemyFreezer(id, t, h, Pow, rld, reg);
+				break;
+			case HEALER:
+				e = new EnemyHealer(id, t, h, Pow, rld, reg);
+				break;
+			default :
+				e = new EnemyFighter(id, t, h, Pow, rld, reg);
+
+			} 
+		InactiveEnemies.Enqueue(e);
+
+		//Reading the Sequence number
+		loadfile >> word; 
+		id = stoi(word, 0, 10);
+		} while (id != -1);
+	}
+}
+
+void Battle::ActicvateEnemies(double t)
+{
+	Enemy* e = NULL;
+	if (!InactiveEnemies.IsEmpty())
+	{
+		InactiveEnemies.PeekFront(e);
+		while (e->GetArrivalTime() < t)
+		{
+			InactiveEnemies.Dequeue(e);
+			if (EnemyCount < MaxEnemyCount)
+				BEnemiesForDraw[EnemyCount++] = e;
+			ActiveEnemies.Enqueue(e);
+		}
+	}
+
+}
+
+void Battle::DecrementDistALL()
+{
+	for (int i = 0; i < EnemyCount; i++)
+	{
+		BEnemiesForDraw[i]->DecrementDist();
+	}
+}
 
 
 void Battle::RunSimulation()
 {
+	InputGenerator(); //Generate Input file
 	Just_A_Demo();
 }
 
@@ -59,32 +176,11 @@ void Battle::Just_A_Demo()
 	// Declare some enemies and fill their data
 	// In the game, enemies should be loaded from an input file
 	// and should be dynamically allocated
-	
-	Enemy *e1 = new EnemyFighter(A_REG, 6);
-	Enemy *e2 = new EnemyHealer(D_REG, 60);
-	Enemy *e3 = new EnemyFreezer(B_REG, 60);
-	Enemy *e4 = new EnemyFighter(A_REG, 4);
-	Enemy *e5 = new EnemyHealer(C_REG, 19);
-	Enemy *e6 = new EnemyFreezer(C_REG, 30);
-	Enemy *e7 = new EnemyFighter(A_REG, 2);
-	Enemy *e8 = new EnemyHealer(C_REG, 7);
-	Enemy *e9 = new EnemyFreezer(A_REG, 30);
-	Enemy *e10 = new EnemyFighter(C_REG, 4);
-	Enemy *e11 = new EnemyHealer(A_REG, 20);
-	
+
 
 	// Adding the enemies to the battle
-	AddEnemy(e1);
-	AddEnemy(e2);
-	AddEnemy(e3);
-	AddEnemy(e4);
-	AddEnemy(e5);
-	AddEnemy(e6);
-	AddEnemy(e7);
-	AddEnemy(e8);
-	AddEnemy(e9);
-	AddEnemy(e10);
-	AddEnemy(e11);
+	AddEnemy_InputFile();
+	ActicvateEnemies(0);
 
 	// Drawing the battle
 	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
@@ -94,20 +190,14 @@ void Battle::Just_A_Demo()
 
 	// Now a demo to move enemies some time steps
 	// TimeStep is a normal integer that is incremented each time by 1
-	for(int TimeStep = 1 ; TimeStep <= 30 ; TimeStep++)
+	for(int TimeStep = 1 ; TimeStep <= MaxTimeStep ; TimeStep++)
 	{
+		//Add Recent Active enemies from Inactive list to Active list
+		ActicvateEnemies(TimeStep);
 
 		// Decrement the distance of each enemy. Just for the sake of demo
-		e1->DecrementDist();
-		e2->DecrementDist();
-		e3->DecrementDist();
-		e4->DecrementDist();
-		e5->DecrementDist();
-		e6->DecrementDist();
-		e7->DecrementDist();
-		e8->DecrementDist();
-		e9->DecrementDist();
-		e10->DecrementDist();
+
+		DecrementDistALL();
 
 		// Redraw the enemies
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
