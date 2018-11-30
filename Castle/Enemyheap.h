@@ -9,10 +9,10 @@ using namespace std;
 template <int const MAX_HEAP_SIZE=100>
 class Enemyheap
 {
+
 private:
 	Enemy*	Elements[MAX_HEAP_SIZE];             // Array of pointers
 	int size;									// Number of elements in the heap
-
 public:
 	Enemyheap();							// Parameterized constructor
 	~Enemyheap();                           // Destructor

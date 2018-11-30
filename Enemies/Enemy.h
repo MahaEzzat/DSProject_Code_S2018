@@ -19,46 +19,46 @@ protected:
 	int ID;         //Each enemy has a unique ID (sequence number)
 	color Clr;	    //Color of the enemy (will be set depending on the enemy type: Paver, ...etc.)
 	REGION Region;  //Region of this enemy
-	int Distance;	//Horizontal distance between enemy & the tower of its region
-						//Always positive (ranges from 2 to 60)
-
+	int distance = MaxDistance;	//Horizontal distance between enemy & the tower of its region
+					//Always positive (ranges from 2 to 60)
 	double priority;//priority of the enemy
 	double Health;	//Enemy health
 	double power;   //Enemy attack power
-	double LT;      //Enemy Life time 
+	double LT = 0;      //Enemy Life time 
 	double KD;      //Enemy Killed time
 	double FD;      //Enemy First-shot delay
 	double T;       //Enemy Arrival time
 	double RLD;     //Enemy reload period
-	ENEMY_STATE state;    //Enemy State (Frozen,Inaction,Reloading)
-
-
+	                //We Would Make The Enemy Reload Every 5 steps
+	ENEMY_TYPE type;
+	ENEMY_STATE state;          //Enemy State (Frozen,Inaction,Reloading)
+	int clockIce;				//Clock for freezed time
+	int clockReload;             //Clock for reload time
+	int steps = 0;              //Counting the Enemy Steps 
 public:
-	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, int d = MaxDistance);
+	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee);
 	 ~Enemy();
-
 	color GetColor() const;
 	REGION GetRegion() const;
-
-
 	void DecrementDist();
 	void SetDistance(int d);
 	int GetDistance() const;
-	void Damage();
-
-	// Getter and Setter
+	double GetHealth() const;
 	void SetKD(double kd);
+	ENEMY_TYPE GetType() const;
 	double GetKD() const;
 	void SetFD(double fd);
 	double GetFD() const;
 	double GetPriority() const;
 	double GetArrivalTime() const;
 	void CalPriority();
-
-	// Virtual Functions: ----------------
-
+	void Damage(double bullet);
+	void frozen();                 //the enemy would be freezed for 2 time step
+	void Clocks();      
+	void Reloading();
+	bool isKilled();
 	//virtual void Move() = 0;	//All enemies can move color based
-	//virtual void Act() = 0;	//Acting means fighting or healing
+	virtual void Act() = 0;	
 
 	//
 

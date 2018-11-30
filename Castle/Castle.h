@@ -3,23 +3,18 @@
 #include "..\Defs.h"
 #include "..\CMUgraphicsLib\CMUgraphics.h"
 #include "..\GUI\GUI.h"
-
+#include <vector>
 #include "Tower.h"
 
 class Castle
 {
-	Tower Towers[NoOfRegions];
 
-	//
-	// TODO: Add More Data Members As Needed
-	//
+	Tower Towers[NoOfRegions];
 	
 public:
 
 	Castle();
 	void SetTowerHealth(REGION TowerRegion, double h);
-	Tower* GetTowers();
-	//
-	// TODO: Add More Member Functions As Needed
-	//
+	Tower* getTowers();
+	
 };

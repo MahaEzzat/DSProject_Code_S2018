@@ -20,6 +20,7 @@ void Battle::AddEnemy_InputFile()
 	string loadfilename = "input.txt";
 	fstream loadfile;
 	loadfile.open(loadfilename, ios::in);
+	//specifying the tower regions
 
 	if (loadfile)
 	{
@@ -28,9 +29,7 @@ void Battle::AddEnemy_InputFile()
 		REGION reg;
 		string Type;
 		ENEMY_TYPE type;
-
 		string word;
-
 		//Reading Tower Health
 		loadfile >> word; 
 		TowerInitHealth = stoi(word, 0, 10);
@@ -57,7 +56,7 @@ void Battle::AddEnemy_InputFile()
 			switch (stoi(word, 0, 10))
 			{
 			case 1:
-				if (a >= 15)
+				if (a >= 20)
 					type = FIGHTER;
 				else
 					type = FREEZER;
@@ -95,22 +94,20 @@ void Battle::AddEnemy_InputFile()
 				reg = C_REG;
 			else
 				reg = D_REG;
-	
 			Enemy *e;
 			switch (type)
 			{
 			case FREEZER:
-				e = new EnemyFreezer(id, t, h, Pow, rld, reg);
+				e = new EnemyFreezer(id, t, h, Pow, rld, reg , type);
 				break;
 			case HEALER:
-				e = new EnemyHealer(id, t, h, Pow, rld, reg);
+				e = new EnemyHealer(id, t, h, Pow, rld, reg , type);
 				break;
 			default :
-				e = new EnemyFighter(id, t, h, Pow, rld, reg);
+				e = new EnemyFighter(id, t, h, Pow, rld, reg , type);
 
 			} 
 		InactiveEnemies.Enqueue(e);
-
 		//Reading the Sequence number
 		loadfile >> word; 
 		id = stoi(word, 0, 10);
@@ -118,24 +115,35 @@ void Battle::AddEnemy_InputFile()
 	}
 }
 
-void Battle::ActicvateEnemies(double t)
+void Battle::ActivatedEnemies(double t)
 {
 	Enemy* e = NULL;
 	if (!InactiveEnemies.IsEmpty())
 	{
 		InactiveEnemies.PeekFront(e);
-		while (e->GetArrivalTime() < t)
+		while (e->GetArrivalTime() <= t && !InactiveEnemies.IsEmpty())
 		{
 			InactiveEnemies.Dequeue(e);
 			if (EnemyCount < MaxEnemyCount)
 				BEnemiesForDraw[EnemyCount++] = e;
-			ActiveEnemies.Enqueue(e);
+
+			REGION h = e->GetRegion();
+			ActiveEnemies[h].Enqueue(e);
 		}
 	}
 
 }
 
-void Battle::DecrementDistALL()
+
+void Battle::DecrementClocks()
+{
+	for (int i = 0; i < EnemyCount; i++)
+	{
+		BEnemiesForDraw[i]->Clocks();
+	}
+}
+
+void Battle::DecrementDistanceAll()
 {
 	for (int i = 0; i < EnemyCount; i++)
 	{
@@ -143,67 +151,126 @@ void Battle::DecrementDistALL()
 	}
 }
 
+void Battle::checkDead()                     //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
+{
+	Tower *Towers = BCastle.getTowers();
+	for (int j = 0; j < NoOfRegions;j++)
+	{
+		while (!tobeTested[j].IsEmpty())
+		{
+			Enemy* x; 
+			tobeTested[j].Dequeue(x);
+			if (x->isKilled())
+			{
+				KilledEnemies.Enqueue(x);
+				Towers[j].IncrementKilledEnemies();
+			}
+			else
+			{
+				ActiveEnemies[j].Enqueue(x);
+				Towers[j].SetEnemiesNumber(ActiveEnemies[j].GetSize());
+				
+			}
+		}
+	
+	}
+}
+
+
 
 void Battle::RunSimulation()
 {
 	InputGenerator(); //Generate Input file
-	Just_A_Demo();
+	Simulation();
 }
 
 
-//This is just a demo function for project introductory phase
-//It should be removed in phases 1&2
-void Battle::Just_A_Demo()
+void Battle::Simulation()
 {
-	
-	std::cout<<"\nWelcome to Castle Battle:\n";
-	std::cout<<"\nIn phase2, you will be asked to select game mode\n";
-	std::cout<<"\nFor now just press ENTER key to continue...";
-	
-	char tmp[10];
-	std::cin.getline(tmp,10);
-	//
-	// THIS IS JUST A DEMO
-	// IT SHOULD BE REMOVED IN PHASE 1 AND PHASE 2
-	//
-	
-	GUI * pGUI = new GUI;
 
-	pGUI->PrintMessage("This is Just a Demo. It should be changed ib phase1 & phase2. Click to move to next step");
-
-	
-	 
-	// Declare some enemies and fill their data
-	// In the game, enemies should be loaded from an input file
-	// and should be dynamically allocated
+	int clock;
+	Castle h;
+	Tower* towers = h.getTowers();
+	cout << "Enter the time of the Simulation" << endl;
+	cin >> clock;
+	cout << "\n\n\n\nEnter Max number of Each Tower can Attack at a time\nIt is preferable to make it between 10:15\n\n\n\n";
+	int enemiesA, enemiesB, enemiesC, enemiesD;
+	cout << "For Tower in Region A" << endl;
+	cin >> enemiesA;
+	cout << "\nFor Tower in Region B" << endl;
+	cin >> enemiesB;
+	cout << "\nFor Tower in Region C" << endl;
+	cin >> enemiesC;
+	cout << "\nFor Tower in Region D" << endl;
+	cin >> enemiesD;
+	int enemies[NoOfRegions] = { enemiesA, enemiesB, enemiesC, enemiesD };
 
 
-	// Adding the enemies to the battle
+
+	GUI* pGUI = new GUI;
+	Tower *Towers = BCastle.getTowers();
+
 	AddEnemy_InputFile();
-	ActicvateEnemies(0);
-
-	// Drawing the battle
-	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
+	ActivatedEnemies(0);
 
 	Point p;
 	pGUI->GetPointClicked(p);
+	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
-	// Now a demo to move enemies some time steps
-	// TimeStep is a normal integer that is incremented each time by 1
-	for(int TimeStep = 1 ; TimeStep <= MaxTimeStep ; TimeStep++)
+	int x = 0;
+	do
 	{
-		//Add Recent Active enemies from Inactive list to Active list
-		ActicvateEnemies(TimeStep);
+		DecrementClocks();
+		//Tower Attack
+		int enemies_counter;
+	
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			if (ActiveEnemies[j].GetSize() > enemies[j])
+				enemies_counter = enemies[j];
+			else
+				enemies_counter = ActiveEnemies[j].GetSize();
 
-		// Decrement the distance of each enemy. Just for the sake of demo
+			for (int i = 0; i < enemies_counter; i++)
+			{
+				if (ActiveEnemies[j].GetSize() != 0)
+				{
+					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
 
-		DecrementDistALL();
+					towers[j].attack(tobeAttacked);
+					tobeTested[j].Enqueue(tobeAttacked);
+				}
+			}
+		}
 
-		// Redraw the enemies
+		checkDead();
+		/*fighting*/
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
-		pGUI->GetPointClicked(p);
-	}
 
-	delete pGUI;
+		pGUI->GetPointClicked(p);
+
+
+		x++;
+		ActivatedEnemies(x);
+		DecrementDistanceAll();
+
+		int ActiveEnemiesNumber = 0;
+		int KilledEnemiesNumber = 0;
+		string msg = "This is Interactive Mode, Number of Active enemies is: ";
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			ActiveEnemiesNumber = Towers[j].GetEnemiesNumber();
+			msg += to_string(ActiveEnemiesNumber) + " ";
+		}
+		msg += ", Number of Killed enemies is: ";
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			KilledEnemiesNumber = Towers[j].GetKilledEnemiesNumber();
+			msg += to_string(KilledEnemiesNumber) + " ";
+		}
+
+		pGUI->PrintMessage(msg);
+	} while (x != clock);
 }
+
