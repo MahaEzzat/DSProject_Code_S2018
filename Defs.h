@@ -9,9 +9,6 @@
 #define MaxEnemyCount 300      // the maximum number of enemies the application can work on
 #define MaxTimeStep 70		    //Maximum TimeStep for simulation Iteration
 
-int static TowerAttackCount = 50;
-int static TowerInitHealth = 200;
-int static TowerInitPower = 100;
 
 //The four regions: A, B, C , and D
 enum REGION {	

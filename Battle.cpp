@@ -32,15 +32,15 @@ void Battle::AddEnemy_InputFile()
 		string word;
 		//Reading Tower Health
 		loadfile >> word; 
-		TowerInitHealth = stoi(word, 0, 10);
+		int TowerInitHealth = stoi(word, 0, 10);
 
 		//Reading Tower Enemies Number
 		loadfile >> word; 
-		TowerAttackCount = stoi(word, 0, 10);
+		int TowerAttackCount = stoi(word, 0, 10);
 
 		//Reading Tower Power
 		loadfile >> word; 
-		TowerInitPower = stoi(word, 0, 10);
+		int TowerInitPower = stoi(word, 0, 10);
 
 		//setting Towers parameters
 		Tower *Towers = BCastle.getTowers();
@@ -163,7 +163,7 @@ void Battle::DecrementDistanceAll()
 	}
 }
 
-void Battle::checkDead()                     //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
+void Battle::checkDead()   //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
 {
 	Tower *Towers = BCastle.getTowers();
 	for (int j = 0; j < NoOfRegions;j++)
@@ -176,6 +176,7 @@ void Battle::checkDead()                     //test all the "tobeTested" queues 
 			{
 				KilledEnemies.Enqueue(x);
 				Towers[j].IncrementKilledEnemies();
+				DecrementEnemiesCount(x);
 			}
 			else
 			{
@@ -188,6 +189,21 @@ void Battle::checkDead()                     //test all the "tobeTested" queues 
 	}
 }
 
+void Battle::DecrementEnemiesCount(Enemy* e)
+{
+	//swapping the deleted enemy to the very last of the array and decrement the number by one
+	for (int i = 0; i < EnemyCount; i++)
+	{
+		if (BEnemiesForDraw[i]->GetId() == e->GetId())
+		{
+			EnemyCount--;
+			BEnemiesForDraw[i] = BEnemiesForDraw[EnemyCount];
+			BEnemiesForDraw[EnemyCount] = nullptr;
+			break;
+		}
+	}
+
+}
 
 
 void Battle::RunSimulation()
@@ -205,6 +221,7 @@ void Battle::Simulation()
 	cin >> clock;
 
 	GUI* pGUI = new GUI;
+	pGUI->PrintMessage("Press Mouse Click To start");
 	Tower *Towers = BCastle.getTowers();
 
 	AddEnemy_InputFile();
@@ -212,6 +229,7 @@ void Battle::Simulation()
 
 	Point p;
 	pGUI->GetPointClicked(p);
+	
 	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
 	int x = 0;
@@ -239,25 +257,22 @@ void Battle::Simulation()
 			}
 		}
 
-		checkDead();
+		checkDead(); //Remove ememies from Active list to killed list if it's dead
 		/*fighting*/
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
-
-		pGUI->GetPointClicked(p);
-
-
-		x++;
 		ActivatedEnemies(x);
 		DecrementDistanceAll();
 
 		int ActiveEnemiesNumber = 0;
 		int KilledEnemiesNumber = 0;
+		int healthoftower = 0;
 		string msg = "This is Interactive Mode, Number of Active enemies is: ";
 		for (int j = 0; j < NoOfRegions; j++)
 		{
 			ActiveEnemiesNumber = Towers[j].GetEnemiesNumber();
 			msg += to_string(ActiveEnemiesNumber) + " ";
+
 		}
 		msg += ", Number of Killed enemies is: ";
 		for (int j = 0; j < NoOfRegions; j++)
@@ -265,8 +280,16 @@ void Battle::Simulation()
 			KilledEnemiesNumber = Towers[j].GetKilledEnemiesNumber();
 			msg += to_string(KilledEnemiesNumber) + " ";
 		}
+		msg += ", Health of towers are :";
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			healthoftower = Towers[j].GetHealth();
+			msg += to_string(healthoftower) + " ";
+		}
 
 		pGUI->PrintMessage(msg);
+		pGUI->GetPointClicked(p);
+		x++;
 	} while (x != clock);
 }
 

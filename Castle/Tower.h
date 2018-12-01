@@ -8,7 +8,7 @@ class Tower
 {
 private:
 
-	double Health = TowerInitHealth;			   //Tower Health
+	double Health;			   //Tower Health
 	double Power;			   //Tower Power
 	TOWER_STATE state = Active;		   //Tower state(Active,Freezed,Killed)
 	int EnemiesNumber;		   //active enemies number	

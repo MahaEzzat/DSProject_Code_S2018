@@ -86,7 +86,7 @@ double Enemy::GetPriority() const
 
 void Enemy::CalPriority()
 {
-	priority = Health + power + 1 / distance;
+	priority = Health + power + 1.0 / distance;
 }
 
 double Enemy::GetArrivalTime() const
@@ -155,4 +155,9 @@ bool Enemy::isKilled()
 void Enemy::Damage(double bullet)
 {
 	Health = Health - bullet;
+}
+
+int Enemy::GetId() const
+{
+	return ID;
 }

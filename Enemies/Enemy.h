@@ -59,7 +59,7 @@ public:
 	void Clocks();      
 	void Reloading();
 	bool isKilled();
-	//virtual void Move() = 0;	//All enemies can move color based
+	int GetId() const;
 	virtual void Act() = 0;	
 
 	//
