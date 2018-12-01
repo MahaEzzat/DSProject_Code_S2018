@@ -80,8 +80,8 @@ void Tower::attack(Enemy* e)
 	srand(time(0));
 	int x = 1 + rand() % 99;
 	int distance = e->GetDistance();
-	double bulletHealer = (Power * (1 / distance)) / 2;
-	double bulletFire = (Power * (1 / distance));
+	double bulletHealer = (Power * (1.0 / distance)) / 2.0;
+	double bulletFire = (Power * (1.0 / distance));
 
 	if (x >= 20) // the tower shoots fire
 	{
@@ -100,8 +100,16 @@ void Tower::attack(Enemy* e)
 	{
 		e->frozen();   
 	}
-}
 
+}
+void Tower::SetattackCapacity(int attack_number)
+{
+	attackCapacity = attack_number;
+}
+int Tower::GetattackCapacity() const
+{
+	return attackCapacity;
+}
 
 Tower::~Tower()
 {

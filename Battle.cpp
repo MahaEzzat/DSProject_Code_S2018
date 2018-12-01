@@ -24,7 +24,7 @@ void Battle::AddEnemy_InputFile()
 
 	if (loadfile)
 	{
-		int id, dist;
+		int id;
 		double t, h, Pow, rld;
 		REGION reg;
 		string Type;
@@ -41,6 +41,16 @@ void Battle::AddEnemy_InputFile()
 		//Reading Tower Power
 		loadfile >> word; 
 		TowerInitPower = stoi(word, 0, 10);
+
+		//setting Towers parameters
+		Tower *Towers = BCastle.getTowers();
+
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			Towers[j].SetHealth(TowerInitHealth);
+			Towers[j].SetPower(TowerInitPower);
+			Towers[j].SetattackCapacity(TowerAttackCount);
+		}
 
 		srand(time(NULL)); // Random generator for picking 20% of Fighters as Freezers
 
@@ -94,6 +104,7 @@ void Battle::AddEnemy_InputFile()
 				reg = C_REG;
 			else
 				reg = D_REG;
+
 			Enemy *e;
 			switch (type)
 			{
@@ -128,6 +139,7 @@ void Battle::ActivatedEnemies(double t)
 				BEnemiesForDraw[EnemyCount++] = e;
 
 			REGION h = e->GetRegion();
+			//cout << endl << InactiveEnemies.GetSize();
 			ActiveEnemies[h].Enqueue(e);
 		}
 	}
@@ -189,23 +201,8 @@ void Battle::Simulation()
 {
 
 	int clock;
-	Castle h;
-	Tower* towers = h.getTowers();
 	cout << "Enter the time of the Simulation" << endl;
 	cin >> clock;
-	cout << "\n\n\n\nEnter Max number of Each Tower can Attack at a time\nIt is preferable to make it between 10:15\n\n\n\n";
-	int enemiesA, enemiesB, enemiesC, enemiesD;
-	cout << "For Tower in Region A" << endl;
-	cin >> enemiesA;
-	cout << "\nFor Tower in Region B" << endl;
-	cin >> enemiesB;
-	cout << "\nFor Tower in Region C" << endl;
-	cin >> enemiesC;
-	cout << "\nFor Tower in Region D" << endl;
-	cin >> enemiesD;
-	int enemies[NoOfRegions] = { enemiesA, enemiesB, enemiesC, enemiesD };
-
-
 
 	GUI* pGUI = new GUI;
 	Tower *Towers = BCastle.getTowers();
@@ -226,8 +223,8 @@ void Battle::Simulation()
 	
 		for (int j = 0; j < NoOfRegions; j++)
 		{
-			if (ActiveEnemies[j].GetSize() > enemies[j])
-				enemies_counter = enemies[j];
+			if (ActiveEnemies[j].GetSize() > Towers[j].GetattackCapacity())
+				enemies_counter = Towers[j].GetattackCapacity();
 			else
 				enemies_counter = ActiveEnemies[j].GetSize();
 
@@ -236,8 +233,7 @@ void Battle::Simulation()
 				if (ActiveEnemies[j].GetSize() != 0)
 				{
 					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
-
-					towers[j].attack(tobeAttacked);
+					Towers[j].attack(tobeAttacked);
 					tobeTested[j].Enqueue(tobeAttacked);
 				}
 			}

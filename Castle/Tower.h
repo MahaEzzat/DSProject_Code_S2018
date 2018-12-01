@@ -34,6 +34,8 @@ public:
 	void Icing(double h);
 	void Damaged(double h);
 	int GetState();
+	void SetattackCapacity(int attack_number);
+	int GetattackCapacity() const;
 	//action methods
 	void attack(Enemy* e);
 	//void freeze();

@@ -45,20 +45,20 @@ void InputGenerator()
 	//now we need to spread them in between different regions evenly -but not so evenly- :")) for each region
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
-		int x = 1 + rand() % (100);
-		if (x <= 29)
+		int x = rand() % (200);
+		if (x < 50)
 		{
 			randomPlace.push_back('A');          //Region A
 		}
-		if (29 < x <= 43)
+		if (50 <= x < 100)
 		{
 			randomPlace.push_back('B');          //Region B
 		}
-		if (41 < x <= 71)
+		if (100 <= x < 150)
 		{
 			randomPlace.push_back('C');         //Region C
 		}
-		if (71 < x <= 92)
+		if (150 <= x < 200)
 		{
 			randomPlace.push_back('D');         //Region D
 		}

@@ -2,6 +2,8 @@
 
 #include "..\Defs.h"
 #include "..\CMUgraphicsLib\CMUgraphics.h"
+#include <iostream>
+
 
 //Enemies colors for next phases
 //You can choose whatever colors you like for your enemies
