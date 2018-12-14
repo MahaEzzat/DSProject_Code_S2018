@@ -100,7 +100,7 @@ void Enemyqueue<Array_Size>::SortFD()
 		}
 	}
 
-	Last_sorted = size-1;
+	Last_sorted = size;
 }
 template <int Array_Size>
 Enemyqueue<Array_Size>::~Enemyqueue()

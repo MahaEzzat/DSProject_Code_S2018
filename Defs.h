@@ -18,6 +18,11 @@ enum REGION {
 	D_REG
 };
 
+enum MODE {
+	INTERACTIVE = 0,
+	SILENT
+};
+
 // The three states of any enemy in Active enemiesheap
 enum ENEMY_STATE {
 	Frozen,

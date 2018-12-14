@@ -13,7 +13,7 @@ void InputGenerator()
 	ofstream output;
 	output.open("input.txt");
 	srand(time(0));
-	int maxNo = 50 + rand() % (30 - 10 + 1);
+	int maxNo = 10 + rand() % (20);
 	double startPower = 100 + rand() % (60 - 10 + 1);
 	output << to_string(MaxEnemyCount) << "\t" << maxNo << "\t" << startPower << endl;
 	//<=20% are healers

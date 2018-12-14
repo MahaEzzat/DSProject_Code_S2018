@@ -1,15 +1,7 @@
-﻿Build started 01/12/2018 09:38:44 م.
+﻿Build started 14/12/2018 12:58:02 م.
      1>Project "F:\Books\Year5\Data_Structure\Project\DSProject_Code_S2018\CastleDSProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug/" /Fd".\Debug/vc120.pdb" /FR".\Debug\\" /Gd /TP /analyze- /errorReport:prompt Battle.cpp Castle\Castle.cpp Castle\Tower.cpp Demo_Main.cpp
-         Demo_Main.cpp
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(29): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(30): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
-         Tower.cpp
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\castle\tower.cpp(80): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-         Castle.cpp
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(29): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(30): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug/" /Fd".\Debug/vc120.pdb" /FR".\Debug\\" /Gd /TP /analyze- /errorReport:prompt Battle.cpp
          Battle.cpp
      1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(29): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
      1>f:\books\year5\data_structure\project\dsproject_code_s2018\gui\gui.h(30): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
@@ -17,9 +9,8 @@
      1>f:\books\year5\data_structure\project\dsproject_code_s2018\inputgenerator.h(53): warning C4804: '<' : unsafe use of type 'bool' in operation
      1>f:\books\year5\data_structure\project\dsproject_code_s2018\inputgenerator.h(57): warning C4804: '<' : unsafe use of type 'bool' in operation
      1>f:\books\year5\data_structure\project\dsproject_code_s2018\inputgenerator.h(61): warning C4804: '<' : unsafe use of type 'bool' in operation
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\battle.cpp(55): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>f:\books\year5\data_structure\project\dsproject_code_s2018\battle.cpp(286): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-         Generating Code...
+     1>f:\books\year5\data_structure\project\dsproject_code_s2018\battle.cpp(56): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>f:\books\year5\data_structure\project\dsproject_code_s2018\battle.cpp(301): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug/CastleDSProject.exe" /INCREMENTAL /NOLOGO odbc32.lib odbccp32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:".\Debug/CastleDSProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\Debug\CastleDSProject.lib" /MACHINE:X86 /SAFESEH .\Debug/Battle.obj
          .\Debug/Castle.obj
@@ -73,4 +64,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:24.24
+Time Elapsed 00:00:12.42

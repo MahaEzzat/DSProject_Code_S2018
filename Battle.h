@@ -40,9 +40,11 @@ public:
 	void AddEnemy_InputFile();	//Loading data from input file into enemies queues
 	void ActivatedEnemies(double t);    //Add Recent Active enemies from Inactive list to Active list
 	void Simulation();			//just to show a demo and should be removed in phase1 1 & 2
+	void Silent();
 	void DecrementClocks();
 	void DecrementDistanceAll();
-	void checkDead();
+	void checkDead(double Time);
+	void OutPut();
 	void DecrementEnemiesCount(Enemy* e);
 };
 

@@ -6,6 +6,7 @@ Enemy::Enemy(int id, double t, double h, double Pow, double rld, REGION r_region
 	Region = r_region;
 	ID = id;
 	T = t;
+	FST = INFINITE;
 	Health = h;
 	RLD = rld;
 	power = Pow;
@@ -31,19 +32,18 @@ void Enemy::DecrementDist()
 {	
 	if (distance > MinDistance)
 	{
-		if (this->Health >= 50)
+		if (this->Health >= 10)
 		{
 			distance--;
-			steps++;
 		}
-		else if (this->Health<50) //less than half ... only move one step every two time steps
+		else if (this->Health<10) //less than half ... only move one step every two time steps
 		{
 			if (steps % 2 == 0)
 			{
 				distance--;
-				steps++;
 			}
 		}
+		steps++;
 	}
 	CalPriority();
 }
@@ -74,6 +74,18 @@ void Enemy::SetFD(double fd)
 {
 	FD = fd;
 }
+void Enemy::SetFST(double Time)
+{
+	if (FST > Time)
+	{
+		FST = Time;
+		SetFD(FST - T);
+	}
+}
+double Enemy::GetFST() const
+{
+	return FST;
+}
 double Enemy::GetFD() const
 {
 	return FD;
@@ -84,9 +96,9 @@ double Enemy::GetPriority() const
 	return priority;
 }
 
-void Enemy::CalPriority()
+void Enemy::CalPriority() //Calculating Priority with Normilized Parameters with equal weignts
 {
-	priority = Health + power + 1.0 / distance;
+	priority = (Health / 100.0)*(1.0/3) + (power / 100.0)*(1.0/3) + (float(MinDistance) /distance)*(1.0/3);
 }
 
 double Enemy::GetArrivalTime() const
@@ -107,13 +119,13 @@ double Enemy::GetHealth() const
 
 void Enemy::frozen()
 {
-	if (this->Health <= 50)
+	if (this->Health <= 20)
 	{
 		clockIce = 1;
 	}
-	else if (this->Health > 50)
+	else if (this->Health > 20)
 	{
-		clockIce = 3;
+		clockIce = 2;
 	}
 }
 
@@ -142,7 +154,6 @@ bool Enemy::isKilled()
 {
 	if (Health <= 0)
 	{
-		Clr = BLACK; //changing killed enemy's color to black
 		return true;
 	}
 	else
@@ -160,4 +171,28 @@ void Enemy::Damage(double bullet)
 int Enemy::GetId() const
 {
 	return ID;
+}
+
+void Enemy::SetArrivalTime(double t)
+{
+	T = t;
+}
+
+double Enemy::GetKTS() const
+{
+	return KTS;
+}
+void Enemy::SetKTS(double Time)
+{
+	KTS = Time;
+	SetKD(KTS-FST);
+	SetLT(KTS-T);
+}
+double Enemy::GetLT() const
+{
+	return LT;
+}
+void Enemy::SetLT(double Time)
+{
+	LT = Time;
 }

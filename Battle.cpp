@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 
 Battle::Battle()
 {
@@ -133,14 +134,14 @@ void Battle::ActivatedEnemies(double t)
 	{
 		InactiveEnemies.PeekFront(e);
 		while (e->GetArrivalTime() <= t && !InactiveEnemies.IsEmpty())
-		{
-			InactiveEnemies.Dequeue(e);
+		{	
 			if (EnemyCount < MaxEnemyCount)
 				BEnemiesForDraw[EnemyCount++] = e;
 
 			REGION h = e->GetRegion();
-			//cout << endl << InactiveEnemies.GetSize();
+			InactiveEnemies.Dequeue(e);
 			ActiveEnemies[h].Enqueue(e);
+			InactiveEnemies.PeekFront(e);
 		}
 	}
 
@@ -163,27 +164,29 @@ void Battle::DecrementDistanceAll()
 	}
 }
 
-void Battle::checkDead()   //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
+void Battle::checkDead(double Time)   //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
 {
 	Tower *Towers = BCastle.getTowers();
 	for (int j = 0; j < NoOfRegions;j++)
 	{
 		while (!tobeTested[j].IsEmpty())
 		{
-			Enemy* x; 
-			tobeTested[j].Dequeue(x);
-			if (x->isKilled())
+			Enemy* e; 
+			tobeTested[j].Dequeue(e);
+			e->SetFST(Time);
+			if (e->isKilled())
 			{
-				KilledEnemies.Enqueue(x);
+				e->SetKTS(Time);
+				KilledEnemies.Enqueue(e);
 				Towers[j].IncrementKilledEnemies();
-				DecrementEnemiesCount(x);
+				DecrementEnemiesCount(e);
 			}
 			else
 			{
-				ActiveEnemies[j].Enqueue(x);
-				Towers[j].SetEnemiesNumber(ActiveEnemies[j].GetSize());
+				ActiveEnemies[j].Enqueue(e);
 				
 			}
+			Towers[j].SetEnemiesNumber(ActiveEnemies[j].GetSize() + 1);
 		}
 	
 	}
@@ -209,59 +212,63 @@ void Battle::DecrementEnemiesCount(Enemy* e)
 void Battle::RunSimulation()
 {
 	InputGenerator(); //Generate Input file
-	Simulation();
+	int x;
+	cout << "Please Enter 0 for interactive mode or 1 for silent mode: ";
+	cin >> x;
+	if (x == INTERACTIVE)
+		Simulation();
+	else
+		Silent();
 }
 
+void Battle::OutPut()
+{
+
+}
 
 void Battle::Simulation()
 {
-
-	int clock;
-	cout << "Enter the time of the Simulation" << endl;
-	cin >> clock;
-
 	GUI* pGUI = new GUI;
 	pGUI->PrintMessage("Press Mouse Click To start");
 	Tower *Towers = BCastle.getTowers();
 
 	AddEnemy_InputFile();
-	ActivatedEnemies(0);
 
 	Point p;
 	pGUI->GetPointClicked(p);
 	
 	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
-	int x = 0;
+	double x = 0;
 	do
 	{
+		ActivatedEnemies(x);
 		DecrementClocks();
 		//Tower Attack
 		int enemies_counter;
 	
 		for (int j = 0; j < NoOfRegions; j++)
 		{
-			if (ActiveEnemies[j].GetSize() > Towers[j].GetattackCapacity())
+			if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
 				enemies_counter = Towers[j].GetattackCapacity();
 			else
-				enemies_counter = ActiveEnemies[j].GetSize();
+				enemies_counter = ActiveEnemies[j].GetSize() + 1;
 
 			for (int i = 0; i < enemies_counter; i++)
 			{
-				if (ActiveEnemies[j].GetSize() != 0)
+				Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
+				if (tobeAttacked != NULL)
 				{
-					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
 					Towers[j].attack(tobeAttacked);
 					tobeTested[j].Enqueue(tobeAttacked);
 				}
 			}
 		}
 
-		checkDead(); //Remove ememies from Active list to killed list if it's dead
+		checkDead(x); //Remove ememies from Active list to killed list if it's dead
 		/*fighting*/
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
-		ActivatedEnemies(x);
 		DecrementDistanceAll();
 
 		int ActiveEnemiesNumber = 0;
@@ -289,7 +296,49 @@ void Battle::Simulation()
 
 		pGUI->PrintMessage(msg);
 		pGUI->GetPointClicked(p);
+		KilledEnemies.SortFD();
 		x++;
-	} while (x != clock);
+	} while (x != 3 * MaxTimeStep);
 }
 
+void Battle::Silent()
+{
+	Tower *Towers = BCastle.getTowers();
+
+	AddEnemy_InputFile();
+
+	int x = 0;
+	do
+	{
+		ActivatedEnemies(x);
+		DecrementClocks();
+		//Tower Attack
+		int enemies_counter;
+
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
+				enemies_counter = Towers[j].GetattackCapacity();
+			else
+				enemies_counter = ActiveEnemies[j].GetSize() + 1;
+
+			for (int i = 0; i < enemies_counter; i++)
+			{
+				Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
+				if (tobeAttacked != NULL)
+				{
+					Towers[j].attack(tobeAttacked);
+					tobeTested[j].Enqueue(tobeAttacked);
+				}
+			}
+		}
+
+		checkDead(x); //Remove ememies from Active list to killed list if it's dead
+		
+		DecrementDistanceAll();
+		
+		KilledEnemies.SortFD();
+		x++;
+	} while (x != 3*MaxTimeStep);
+	OutPut();
+}

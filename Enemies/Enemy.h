@@ -26,8 +26,10 @@ protected:
 	double priority;//priority of the enemy
 	double Health;	//Enemy health
 	double power;   //Enemy attack power
-	double LT = 0;      //Enemy Life time 
-	double KD;      //Enemy Killed time
+	double LT;      //Enemy Life time 
+	double KTS;		//Enemy Killed Time
+	double FST;		//Enemy Fist-shot Time
+	double KD;      //Enemy Killed Time delay
 	double FD;      //Enemy First-shot delay
 	double T;       //Enemy Arrival time
 	double RLD;     //Enemy reload period
@@ -53,12 +55,19 @@ public:
 	double GetFD() const;
 	double GetPriority() const;
 	double GetArrivalTime() const;
+	void SetArrivalTime(double t);
 	void CalPriority();
 	void Damage(double bullet);
 	void frozen();                 //the enemy would be freezed for 2 time step
 	void Clocks();      
 	void Reloading();
 	bool isKilled();
+	double GetKTS() const;
+	void SetKTS(double Time);
+	double GetLT() const;
+	void SetFST(double Time);
+	double GetFST() const;
+	void SetLT(double Time);
 	int GetId() const;
 	virtual void Act() = 0;	
 

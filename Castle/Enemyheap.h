@@ -129,6 +129,8 @@ bool Enemyheap<MAX_HEAP_SIZE>::Enqueue(Enemy *item)
 template <int const MAX_HEAP_SIZE>
 Enemy *Enemyheap<MAX_HEAP_SIZE>::Dequeue()
 {
+	if (size == -1)
+		return NULL;
 	Enemy *temp = Elements[0];
 	// Copy last item into root
 	Elements[0] = Elements[size];
@@ -136,10 +138,7 @@ Enemy *Enemyheap<MAX_HEAP_SIZE>::Dequeue()
 	size--;
 	// Reheap the tree
 	ReheapDown(0);
-	if (size == -1)
-		return NULL;
-	else
-		return temp;
+	return temp;
 }
 
 //---------------------------------------
