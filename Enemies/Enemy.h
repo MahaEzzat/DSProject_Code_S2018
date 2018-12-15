@@ -69,6 +69,7 @@ public:
 	double GetFST() const;
 	void SetLT(double Time);
 	int GetId() const;
+	void setRegion(REGION reg);
 	virtual void Act() = 0;	
 
 	//

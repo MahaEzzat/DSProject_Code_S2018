@@ -30,13 +30,13 @@ REGION Enemy::GetRegion() const
 
 void Enemy::DecrementDist()
 {	
-	if (distance > MinDistance)
+	if (distance > MinDistance && clockIce > 0)
 	{
-		if (this->Health >= 10)
+		if (this->Health >= 50)
 		{
 			distance--;
 		}
-		else if (this->Health<10) //less than half ... only move one step every two time steps
+		else if (this->Health<50) //less than half ... only move one step every two time steps
 		{
 			if (steps % 2 == 0)
 			{
@@ -119,13 +119,13 @@ double Enemy::GetHealth() const
 
 void Enemy::frozen()
 {
-	if (this->Health <= 20)
-	{
-		clockIce = 1;
-	}
-	else if (this->Health > 20)
+	if (this->Health <= 50)
 	{
 		clockIce = 2;
+	}
+	else if (this->Health > 50)
+	{
+		clockIce = 1;
 	}
 }
 
@@ -195,4 +195,8 @@ double Enemy::GetLT() const
 void Enemy::SetLT(double Time)
 {
 	LT = Time;
+}
+void Enemy::setRegion(REGION reg)
+{
+	Region = reg;
 }

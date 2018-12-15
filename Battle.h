@@ -32,6 +32,11 @@ private:
 	Enemyqueue<MaxEnemyCount> InactiveEnemies; //queue of Inactive Enemies*
 	Enemyqueue<MaxEnemyCount> KilledEnemies;   //queue of kileed Enemies*
 
+	int TowerInitHealth;
+	int TowerAttackCount;
+	int TowerInitPower;
+	int countt = 0;
+
 public:
 	
 	Battle();
@@ -46,5 +51,12 @@ public:
 	void checkDead(double Time);
 	void OutPut();
 	void DecrementEnemiesCount(Enemy* e);
+
+	void towerDeath();                    //if tower is dead the enemies would move to the adjacent region
+	                                                  //A->B->c->D->A
+	void moveAdjacent(Enemy* e);           //find the adjacent region
+	void revive();                        //if any of the tower is dead the other towers would revive if they health is good 
+												//other-wise towerDeath() is called.
+
 };
 

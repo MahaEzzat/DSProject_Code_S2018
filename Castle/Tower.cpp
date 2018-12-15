@@ -14,7 +14,10 @@ void Tower::SetHealth(double h)
 	if (h > 0)
 		Health = h;
 	else
+	{
 		Health = 0; // killed
+		state = Killed;
+	}
 }
 
 double Tower::GetHealth() const
@@ -46,9 +49,9 @@ int Tower::GetKilledEnemiesNumber() const
 	return KilledEnemiesNumber;
 }
 
-int Tower::GetState()
+TOWER_STATE Tower::GetState()
 {
-	return (int)state;
+	return state;
 }
 
 void Tower::Icing(double h)
@@ -77,28 +80,31 @@ void Tower::SetRegion(int x)
 
 void Tower::attack(Enemy* e)
 {
-	srand(time(0));
-	int x = 1 + rand() % 99;
-	int distance = e->GetDistance();
-	double bulletHealer = (Power * (1.0 / distance)) / 2.0;
-	double bulletFire = (Power * (1.0 / distance));
-
-	if (x >= 20) // the tower shoots fire
+	if (state == Active)
 	{
+		srand(time(0));
+		int x =  rand() % 100;
+		int distance = e->GetDistance();
+		double bulletHealer = (Power * (1.0 / distance)) / 2.0;
+		double bulletFire = (Power * (1.0 / distance));
 
-		if ((e->GetType() == FIGHTER) || (e->GetType() == FREEZER))
+		if (20<= x < 100) // the tower shoots fire
 		{
-			e->Damage(bulletFire);
+
+			if ((e->GetType() == FIGHTER) || (e->GetType() == FREEZER))
+			{
+				e->Damage(bulletFire);
+			}
+			else if (e->GetType() == HEALER)
+			{
+				e->Damage(bulletHealer);
+			}
 		}
-		else if (e->GetType() == HEALER)
+		//in case the tower shoots ice on enemies 
+		if (0 <= x < 20)
 		{
-			e->Damage(bulletHealer);
+			e->frozen();
 		}
-	}
-	//in case the tower shoots ice on enemies 
-	else
-	{
-		e->frozen();   
 	}
 
 }
@@ -114,4 +120,14 @@ int Tower::GetattackCapacity() const
 Tower::~Tower()
 {
 
+}
+
+REGION Tower::getRegion()
+{
+	return regioon;
+}
+
+void Tower::setState(TOWER_STATE statte)
+{
+	state = statte;
 }

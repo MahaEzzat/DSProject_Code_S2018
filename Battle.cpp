@@ -33,15 +33,15 @@ void Battle::AddEnemy_InputFile()
 		string word;
 		//Reading Tower Health
 		loadfile >> word; 
-		int TowerInitHealth = stoi(word, 0, 10);
+		TowerInitHealth = stoi(word, 0, 10);
 
 		//Reading Tower Enemies Number
 		loadfile >> word; 
-		int TowerAttackCount = stoi(word, 0, 10);
+		TowerAttackCount = stoi(word, 0, 10);
 
 		//Reading Tower Power
 		loadfile >> word; 
-		int TowerInitPower = stoi(word, 0, 10);
+		TowerInitPower = stoi(word, 0, 10);
 
 		//setting Towers parameters
 		Tower *Towers = BCastle.getTowers();
@@ -208,6 +208,78 @@ void Battle::DecrementEnemiesCount(Enemy* e)
 
 }
 
+void Battle::towerDeath()
+{
+	Tower* towers = BCastle.getTowers();
+
+	for (int i = 0; i < NoOfRegions; i++)
+	{	
+		if (towers[i].GetState() == Killed)
+		{	
+			Enemy *e = ActiveEnemies[i].Dequeue();
+			REGION current;
+			if (e != NULL)
+			{
+				while (e != NULL)
+				{
+					moveAdjacent(e);
+					current = e->GetRegion();
+					ActiveEnemies[int(current)].Enqueue(e);
+					e = ActiveEnemies[i].Dequeue();
+				}
+				towers[current].SetEnemiesNumber(towers[current].GetEnemiesNumber() + towers[i].GetEnemiesNumber());
+				towers[i].SetEnemiesNumber(0);
+			}
+
+		}
+	}
+}
+
+void Battle::moveAdjacent(Enemy* e)
+{
+	if (e->GetRegion() == A_REG)
+		e->setRegion(B_REG);
+
+	else if (e->GetRegion() == B_REG)
+			e->setRegion(C_REG);
+
+		else if (e->GetRegion() == C_REG)
+				e->setRegion(D_REG);
+			
+			else if (e->GetRegion() == D_REG)
+					e->setRegion(A_REG);
+				
+}
+
+/*
+    We would loop over the towers and if any is dead and any of towers has a health over 35% it will give the dead tower 10% of their health 
+	else the tower is not revived
+*/
+void Battle::revive()
+{
+	Tower* towers = BCastle.getTowers();
+	int Number_of_cont = 0;
+	for (int i = 0; i < NoOfRegions; i++)
+	{
+		if (towers[i].GetState() == Killed)
+		{
+			for (int k = 0; k < NoOfRegions; k++)
+			{
+				if (towers[k].GetHealth() >= 0.35 * TowerInitHealth)
+				{
+					Number_of_cont++;
+					double tobeAdded = towers[k].GetHealth();
+					towers[k].SetHealth(tobeAdded - tobeAdded*0.1);
+					towers[i].SetHealth(towers[i].GetHealth() + tobeAdded*0.1);
+					towers[i].setState(Active);
+				}
+			}
+		}
+	}
+	if (Number_of_cont == 0)
+		towerDeath();
+}
+
 
 void Battle::RunSimulation()
 {
@@ -266,9 +338,11 @@ void Battle::Simulation()
 		}
 
 		checkDead(x); //Remove ememies from Active list to killed list if it's dead
-		/*fighting*/
-		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 
+		revive(); 
+		       
+
+		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 		DecrementDistanceAll();
 
 		int ActiveEnemiesNumber = 0;
@@ -293,10 +367,13 @@ void Battle::Simulation()
 			healthoftower = Towers[j].GetHealth();
 			msg += to_string(healthoftower) + " ";
 		}
-
+		
 		pGUI->PrintMessage(msg);
 		pGUI->GetPointClicked(p);
 		KilledEnemies.SortFD();
+
+		if (x > MaxTimeStep + 10)
+			Towers[1].SetHealth(Towers[1].GetHealth() - 50);
 		x++;
 	} while (x != 3 * MaxTimeStep);
 }
@@ -334,7 +411,7 @@ void Battle::Silent()
 		}
 
 		checkDead(x); //Remove ememies from Active list to killed list if it's dead
-		
+		revive();
 		DecrementDistanceAll();
 		
 		KilledEnemies.SortFD();

@@ -13,7 +13,7 @@ void InputGenerator()
 	ofstream output;
 	output.open("input.txt");
 	srand(time(0));
-	int maxNo = 10 + rand() % (20);
+	int maxNo = 20 + rand() % (20);
 	double startPower = 100 + rand() % (60 - 10 + 1);
 	output << to_string(MaxEnemyCount) << "\t" << maxNo << "\t" << startPower << endl;
 	//<=20% are healers
@@ -45,20 +45,20 @@ void InputGenerator()
 	//now we need to spread them in between different regions evenly -but not so evenly- :")) for each region
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
-		int x = rand() % (200);
-		if (x < 50)
+		int x = rand() % (100);
+		if (0<= x < 25)
 		{
 			randomPlace.push_back('A');          //Region A
 		}
-		if (50 <= x < 100)
+		if (25 <= x < 50)
 		{
 			randomPlace.push_back('B');          //Region B
 		}
-		if (100 <= x < 150)
+		if (50 <= x < 75)
 		{
 			randomPlace.push_back('C');         //Region C
 		}
-		if (150 <= x < 200)
+		if (75 <= x < 100)
 		{
 			randomPlace.push_back('D');         //Region D
 		}

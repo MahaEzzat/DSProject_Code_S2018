@@ -257,7 +257,7 @@ void GUI::DrawEnemies(Enemy* enemies[], int size) const
 		else // print message maximum reached in this region
 		{
 			PrintMessage("Cannot Draw Enemies of region " + to_string(region+1) + 
-				"! More than" + to_string(MaxVerticalEnemies) + " enemies are in the same region and distance..");
+				"! More than " + to_string(MaxVerticalEnemies) + " enemies are in the same region and distance..");
 			Sleep(1000); // because may be more than one region has drawing overflow
 		}
 	}

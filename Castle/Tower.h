@@ -33,9 +33,11 @@ public:
 	int GetKilledEnemiesNumber() const;
 	void Icing(double h);
 	void Damaged(double h);
-	int GetState();
+	TOWER_STATE GetState();
 	void SetattackCapacity(int attack_number);
 	int GetattackCapacity() const;
+	REGION getRegion();
+	void setState(TOWER_STATE statee);
 	//action methods
 	void attack(Enemy* e);
 	//void freeze();

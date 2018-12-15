@@ -12,10 +12,10 @@
 
 //The four regions: A, B, C , and D
 enum REGION {	
-	A_REG,
-	B_REG,
-	C_REG,
-	D_REG
+	A_REG = 0,
+	B_REG = 1,
+	C_REG = 2, 
+	D_REG = 3
 };
 
 enum MODE {
@@ -38,9 +38,9 @@ enum ENEMY_TYPE {
 
 // The tree tower states 
 enum TOWER_STATE {
-	Active,
-	Freezed,
-	Killed
+	Active = 0,
+	Freezed = 1,
+	Killed = 2
 };
 
 
