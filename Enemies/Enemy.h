@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ENEMY_H
+#define ENEMY_H
 
 #include "..\Defs.h"
 #include "..\CMUgraphicsLib\CMUgraphics.h"
@@ -10,8 +11,10 @@
 const color FIGHTER_CLR = ORANGERED;
 const color FEEZER_CLR = CYAN;
 const color HEALER_CLR = LIGHTGREEN;
+const color WEAKEN_CLR = PURPLE;
+const color COLLECTOR_CLR = YELLOW;
 
-
+class Tower;
 // Enemy is the base class of each type of enemy
 // Enemy should be an abstract class in next phases
 class Enemy
@@ -25,6 +28,7 @@ protected:
 					//Always positive (ranges from 2 to 60)
 	double priority;//priority of the enemy
 	double Health;	//Enemy health
+	double original_health;   //Enemy original health
 	double power;   //Enemy attack power
 	double LT;      //Enemy Life time 
 	double KTS;		//Enemy Killed Time
@@ -39,8 +43,9 @@ protected:
 	int clockIce;				//Clock for freezed time
 	int clockReload;             //Clock for reload time
 	int steps = 0;              //Counting the Enemy Steps 
+	Tower* Tower_Ptr;
 public:
-	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee);
+	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee, Tower* ptr);
 	 ~Enemy();
 	color GetColor() const;
 	REGION GetRegion() const;
@@ -70,10 +75,14 @@ public:
 	void SetLT(double Time);
 	int GetId() const;
 	void setRegion(REGION reg);
-	virtual void Act() = 0;	
+	double GetOriginalHealth();
+	double GetPower();
+	void SetHealth(double h);
+	virtual void Act() = 0;
 
 	//
 
 
 };
 
+#endif

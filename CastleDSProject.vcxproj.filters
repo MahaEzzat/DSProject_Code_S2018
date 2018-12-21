@@ -149,6 +149,12 @@
     <ClCompile Include="Enemies\EnemyHealer.cpp">
       <Filter>Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Enemies\EnemyCollector.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\EnemyWeaken.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -240,6 +246,12 @@
     <ClInclude Include="InputGenerator.h" />
     <ClInclude Include="Castle\Enemyheap.h">
       <Filter>Castle</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\EnemyCollector.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\EnemyWeaken.h">
+      <Filter>Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

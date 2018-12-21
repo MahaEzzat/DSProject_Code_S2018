@@ -1,8 +1,10 @@
-#pragma once
+#ifndef TOWER_H
+#define TOWER_H
+
 #include "..\Defs.h"
-#include "Enemyheap.h"
-#include "Enemyqueue.h"
 #include "..\Enemies\Enemy.h"
+
+class Castle;
 
 class Tower
 {
@@ -10,12 +12,15 @@ private:
 
 	double Health;			   //Tower Health
 	double Power;			   //Tower Power
-	TOWER_STATE state = Active;		   //Tower state(Active,Freezed,Killed)
+	TOWER_STATE state = Active;//Tower state(Active,Freezed,Killed)
 	int EnemiesNumber;		   //active enemies number	
 	int KilledEnemiesNumber;   //killed enemies number
 	double freezed = 0;
 	REGION regioon;
 	int attackCapacity;          //the number of enemies the tower could attack every time step
+	double sum_of_ice = 0;       // the sum of ice thrown on the tower by the enemies
+	Castle *Castle_Ptr;
+
 
 public:
 
@@ -38,11 +43,18 @@ public:
 	int GetattackCapacity() const;
 	REGION getRegion();
 	void setState(TOWER_STATE statee);
+
+	void SetCastlePtr(Castle* ptr);
+	Castle* GetCastlePtr();
+	
 	//action methods
 	void attack(Enemy* e);
+	// function to count the ice on the tower
+	void CountIce(double icebullet);
 	//void freeze();
 	//
 	
 
 };
 
+#endif

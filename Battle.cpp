@@ -8,8 +8,13 @@
 Battle::Battle()
 {
 	EnemyCount = 0;
+	BCastle.SetBattlePtr(this);
 }
 
+Enemyheap<MaxEnemyCount>* Battle::GetActiveList(int index)
+{
+	return &(ActiveEnemies[index]);
+}
 
 Castle * Battle::GetCastle()
 {
@@ -32,16 +37,16 @@ void Battle::AddEnemy_InputFile()
 		ENEMY_TYPE type;
 		string word;
 		//Reading Tower Health
-		loadfile >> word; 
-		TowerInitHealth = stoi(word, 0, 10);
+		loadfile >> word;
+		int TowerInitHealth = stoi(word, 0, 10);
 
 		//Reading Tower Enemies Number
-		loadfile >> word; 
-		TowerAttackCount = stoi(word, 0, 10);
+		loadfile >> word;
+		int TowerAttackCount = stoi(word, 0, 10);
 
 		//Reading Tower Power
-		loadfile >> word; 
-		TowerInitPower = stoi(word, 0, 10);
+		loadfile >> word;
+		int TowerInitPower = stoi(word, 0, 10);
 
 		//setting Towers parameters
 		Tower *Towers = BCastle.getTowers();
@@ -56,21 +61,28 @@ void Battle::AddEnemy_InputFile()
 		srand(time(NULL)); // Random generator for picking 20% of Fighters as Freezers
 
 		//Reading the Sequence number
-		loadfile >> word; 
+		loadfile >> word;
 		id = stoi(word, 0, 10);
-		do 
+		do
 		{
 			//Reading Enemy Type
-			loadfile >> word; 
-			int a = rand() % (100);
-
+			loadfile >> word;
+			int x = rand() % (100);
 			switch (stoi(word, 0, 10))
 			{
 			case 1:
-				if (a >= 20)
-					type = FIGHTER;
-				else
-					type = FREEZER;
+				if (0 <= x && x < 20)
+					type = FREEZER;          
+				
+				if (20 <= x && x< 30)
+					type = COLLECTOR;      
+
+				if (30 <= x && x < 40)
+					type = WEAKEN;    
+
+				if (40 <= x && x < 100)
+					type = FIGHTER;         
+
 				break;
 			case 2:
 				type = HEALER;
@@ -80,23 +92,23 @@ void Battle::AddEnemy_InputFile()
 			}
 
 			//Arrival Time
-			loadfile >> word; 
+			loadfile >> word;
 			t = stod(word);
 
 			//Health
-			loadfile >> word; 
+			loadfile >> word;
 			h = stod(word);
-			
+
 			//Reading Power
-			loadfile >> word; 
+			loadfile >> word;
 			Pow = stod(word);
 
 			//Reading RLD
-			loadfile >> word; 
+			loadfile >> word;
 			rld = stod(word);
 
 			//Reading Region
-			loadfile >> word; 
+			loadfile >> word;
 			if (word == "A")
 				reg = A_REG;
 			else if (word == "B")
@@ -106,23 +118,30 @@ void Battle::AddEnemy_InputFile()
 			else
 				reg = D_REG;
 
+			Tower* ptr = &((BCastle.getTowers())[reg]);
 			Enemy *e;
 			switch (type)
 			{
 			case FREEZER:
-				e = new EnemyFreezer(id, t, h, Pow, rld, reg , type);
+				e = new EnemyFreezer(id, t, h, Pow, rld, reg, type, ptr);
 				break;
 			case HEALER:
-				e = new EnemyHealer(id, t, h, Pow, rld, reg , type);
+				e = new EnemyHealer(id, t, h, Pow, rld, reg, type, ptr);
 				break;
-			default :
-				e = new EnemyFighter(id, t, h, Pow, rld, reg , type);
+			case WEAKEN:
+				e = new EnemyWeaken(id, t, h, Pow, rld, reg, type, ptr);
+				break;
+			case COLLECTOR:
+				e = new EnemyCollector(id, t, h, Pow, rld, reg, type, ptr);
+				break;
+			case FIGHTER:
+				e = new EnemyFighter(id, t, h, Pow, rld, reg, type, ptr);
 
-			} 
-		InactiveEnemies.Enqueue(e);
-		//Reading the Sequence number
-		loadfile >> word; 
-		id = stoi(word, 0, 10);
+			}
+			InactiveEnemies.Enqueue(e);
+			//Reading the Sequence number
+			loadfile >> word;
+			id = stoi(word, 0, 10);
 		} while (id != -1);
 	}
 }
@@ -160,8 +179,10 @@ void Battle::DecrementDistanceAll()
 {
 	for (int i = 0; i < EnemyCount; i++)
 	{
+		BEnemiesForDraw[i]->Act();
 		BEnemiesForDraw[i]->DecrementDist();
 	}
+
 }
 
 void Battle::checkDead(double Time)   //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
@@ -310,6 +331,8 @@ void Battle::Simulation()
 	pGUI->GetPointClicked(p);
 	
 	pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
+	bool IsEnd = false;
+	string GameResult = "DRAW";
 
 	double x = 0;
 	do
@@ -341,13 +364,13 @@ void Battle::Simulation()
 
 		revive(); 
 		       
-
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
 		DecrementDistanceAll();
 
 		int ActiveEnemiesNumber = 0;
 		int KilledEnemiesNumber = 0;
 		int healthoftower = 0;
+		int Poweroftower = 0;
 		string msg = "This is Interactive Mode, Number of Active enemies is: ";
 		for (int j = 0; j < NoOfRegions; j++)
 		{
@@ -367,15 +390,39 @@ void Battle::Simulation()
 			healthoftower = Towers[j].GetHealth();
 			msg += to_string(healthoftower) + " ";
 		}
+
+		msg += ", Power of towers are :";
+		for (int j = 0; j < NoOfRegions; j++)
+		{
+			Poweroftower = Towers[j].GetPower();
+			msg += to_string(Poweroftower) + " ";
+		}
 		
 		pGUI->PrintMessage(msg);
 		pGUI->GetPointClicked(p);
 		KilledEnemies.SortFD();
 
-		if (x > MaxTimeStep + 10)
-			Towers[1].SetHealth(Towers[1].GetHealth() - 50);
 		x++;
-	} while (x != 3 * MaxTimeStep);
+		if (Towers[0].GetState() == Killed && Towers[1].GetState() == Killed && Towers[2].GetState() == Killed && Towers[3].GetState() == Killed)
+		{
+			IsEnd = true;
+			GameResult = "LOSE";
+		}
+		else if (Towers[0].GetState() == NoPower && Towers[1].GetState() == NoPower && Towers[2].GetState() == NoPower && Towers[3].GetState() == NoPower)
+		{
+			IsEnd = true;
+			GameResult = "LOSE";
+		}
+		else if (ActiveEnemies[0].GetSize() == -1 && ActiveEnemies[1].GetSize() == -1 && ActiveEnemies[2].GetSize() == -1 && ActiveEnemies[3].GetSize() == -1)
+		{
+			IsEnd = true;
+			GameResult = "WIN";
+		}
+
+	} while ((x != 3 * MaxTimeStep) && !IsEnd);
+	string msg = "This is the end of the game, and the result is: " + GameResult + " Press Mouse Click To exit";
+	pGUI->PrintMessage(msg);
+	pGUI->GetPointClicked(p);
 }
 
 void Battle::Silent()

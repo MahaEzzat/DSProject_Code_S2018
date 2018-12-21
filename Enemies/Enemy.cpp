@@ -1,7 +1,6 @@
 #include "Enemy.h"
 
-
-Enemy::Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee)
+Enemy::Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee, Tower* ptr)
 {
 	Region = r_region;
 	ID = id;
@@ -12,6 +11,9 @@ Enemy::Enemy(int id, double t, double h, double Pow, double rld, REGION r_region
 	power = Pow;
 	type = typee;
 	CalPriority();
+	Tower_Ptr = ptr;
+	original_health = Health;
+	clockIce = 0;
 }
 
 Enemy::~Enemy()
@@ -30,7 +32,7 @@ REGION Enemy::GetRegion() const
 
 void Enemy::DecrementDist()
 {	
-	if (distance > MinDistance && clockIce > 0)
+	if (distance > MinDistance && clockIce <= 0)
 	{
 		if (this->Health >= 50)
 		{
@@ -100,6 +102,11 @@ void Enemy::CalPriority() //Calculating Priority with Normilized Parameters with
 {
 	priority = (Health / 100.0)*(1.0/3) + (power / 100.0)*(1.0/3) + (float(MinDistance) /distance)*(1.0/3);
 }
+// function to get the power of the enemy
+double Enemy::GetPower()
+{
+	return power;
+}
 
 double Enemy::GetArrivalTime() const
 {
@@ -119,11 +126,11 @@ double Enemy::GetHealth() const
 
 void Enemy::frozen()
 {
-	if (this->Health <= 50)
+	if (Health <= 50)
 	{
 		clockIce = 2;
 	}
-	else if (this->Health > 50)
+	else if (Health > 50)
 	{
 		clockIce = 1;
 	}
@@ -140,11 +147,11 @@ void Enemy::Reloading()
 
 void Enemy::Clocks()
 {
-	if (clockIce >= 0)
+	if (clockIce > 0)
 	{
 		clockIce--;
 	}
-	if (clockReload >= 0)
+	if (clockReload > 0)
 	{
 		clockReload--;
 	}
@@ -199,4 +206,16 @@ void Enemy::SetLT(double Time)
 void Enemy::setRegion(REGION reg)
 {
 	Region = reg;
+}
+// function to set enemy health 
+void Enemy::SetHealth(double h)
+{
+	if (h <= original_health && h >= 0)
+		Health = h;
+}
+
+// function to get original health of enemy
+double Enemy::GetOriginalHealth()
+{
+	return original_health;
 }

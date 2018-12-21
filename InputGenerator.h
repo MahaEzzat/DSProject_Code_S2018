@@ -14,7 +14,7 @@ void InputGenerator()
 	output.open("input.txt");
 	srand(time(0));
 	int maxNo = 20 + rand() % (20);
-	double startPower = 100 + rand() % (60 - 10 + 1);
+	double startPower = 300 + rand() % (60 - 10 + 1);
 	output << to_string(MaxEnemyCount) << "\t" << maxNo << "\t" << startPower << endl;
 	//<=20% are healers
 	//>=80% are fighters
@@ -46,19 +46,19 @@ void InputGenerator()
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
 		int x = rand() % (100);
-		if (0<= x < 25)
+		if (0<= x && x < 25)
 		{
 			randomPlace.push_back('A');          //Region A
 		}
-		if (25 <= x < 50)
+		if (25 <= x && x < 50)
 		{
 			randomPlace.push_back('B');          //Region B
 		}
-		if (50 <= x < 75)
+		if (50 <= x && x < 75)
 		{
 			randomPlace.push_back('C');         //Region C
 		}
-		if (75 <= x < 100)
+		if (75 <= x && x < 100)
 		{
 			randomPlace.push_back('D');         //Region D
 		}
@@ -74,8 +74,8 @@ void InputGenerator()
 	//now we need to do the same to the power of the enemies with at least power of 70 and maximum power of 100
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
-		int x = 1 + rand() % (30);
-		randomPower.push_back(70 + x);
+		int x = 1 + rand() % (15);
+		randomPower.push_back(x);
 	}
 	//randomized reload time with at least 1 time step reload time and 4 as maximum
 	for (int i = 1; i <= MaxEnemyCount; i++)

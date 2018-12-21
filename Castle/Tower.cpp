@@ -1,4 +1,5 @@
 #include "Tower.h"
+#include "Castle.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -8,6 +9,15 @@ Tower::Tower()
 	KilledEnemiesNumber = 0;
 }
 
+void Tower::SetCastlePtr(Castle* ptr)
+{
+	Castle_Ptr = ptr;
+}
+
+Castle* Tower::GetCastlePtr()
+{
+	return Castle_Ptr;
+}
 
 void Tower::SetHealth(double h)
 {
@@ -20,6 +30,20 @@ void Tower::SetHealth(double h)
 	}
 }
 
+// function to count the ice on the tower
+void Tower::CountIce(double icebullet)
+{
+
+	sum_of_ice = sum_of_ice + icebullet;
+
+	if (icebullet >= (Health *(20.0 / 100.0)))
+	{
+		//freez();   // function to freez the tower
+	}
+
+
+}
+
 double Tower::GetHealth() const
 {
 	return Health;
@@ -27,6 +51,11 @@ double Tower::GetHealth() const
 void Tower::SetPower(double power)
 {
 	Power = power;
+	if (Power <= 0)
+	{
+		state = NoPower;
+		Power = 0;
+	}
 }
 double Tower::GetPower() const
 {
@@ -67,6 +96,7 @@ void Tower::Damaged(double h)
 	Health = Health - h;
 	if (Health <= 0)
 	{
+		Health = 0;
 		state = Killed;
 	}
 }
@@ -88,10 +118,18 @@ void Tower::attack(Enemy* e)
 		double bulletHealer = (Power * (1.0 / distance)) / 2.0;
 		double bulletFire = (Power * (1.0 / distance));
 
-		if (20<= x < 100) // the tower shoots fire
+		if (20 <= x && x < 100) // the tower shoots fire
 		{
 
 			if ((e->GetType() == FIGHTER) || (e->GetType() == FREEZER))
+			{
+				e->Damage(bulletFire);
+			}
+			else if (e->GetType() == COLLECTOR)
+			{
+				e->Damage(bulletFire);
+			}
+			else if  (e->GetType() == WEAKEN)
 			{
 				e->Damage(bulletFire);
 			}
@@ -101,9 +139,9 @@ void Tower::attack(Enemy* e)
 			}
 		}
 		//in case the tower shoots ice on enemies 
-		if (0 <= x < 20)
+		else if (0 <= x && x < 20)
 		{
-			e->frozen();
+			//e->frozen();
 		}
 	}
 

@@ -271,9 +271,11 @@
     </ClCompile>
     <ClCompile Include="Demo_Main.cpp" />
     <ClCompile Include="Enemies\Enemy.cpp" />
+    <ClCompile Include="Enemies\EnemyCollector.cpp" />
     <ClCompile Include="Enemies\EnemyFighter.cpp" />
     <ClCompile Include="Enemies\EnemyFreezer.cpp" />
     <ClCompile Include="Enemies\EnemyHealer.cpp" />
+    <ClCompile Include="Enemies\EnemyWeaken.cpp" />
     <ClCompile Include="GUI\GUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -304,9 +306,11 @@
     <ClInclude Include="CMUgraphicsLib\jpeg\jversion.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="Enemies\Enemy.h" />
+    <ClInclude Include="Enemies\EnemyCollector.h" />
     <ClInclude Include="Enemies\EnemyFighter.h" />
     <ClInclude Include="Enemies\EnemyFreezer.h" />
     <ClInclude Include="Enemies\EnemyHealer.h" />
+    <ClInclude Include="Enemies\EnemyWeaken.h" />
     <ClInclude Include="GUI\GUI.h" />
     <ClInclude Include="InputGenerator.h" />
   </ItemGroup>

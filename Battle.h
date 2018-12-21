@@ -1,15 +1,18 @@
-#pragma once
+#ifndef BATTLE_H
+#define BATTLE_H
 
 #include "Enemies\EnemyFighter.h"
-#include "Enemies\/EnemyFreezer.h"
+#include "Enemies\EnemyFreezer.h"
 #include "Enemies\EnemyHealer.h"
-#include "Enemies\Enemy.h"
+#include "Enemies\EnemyWeaken.h"
+#include "Enemies\EnemyCollector.h"
 #include "Castle\Enemyqueue.h"
 #include "Castle\Enemyheap.h"
 #include <fstream>
 #include "Castle\Castle.h"
 
 // it is the controller of the project
+
 class Battle
 {
 private:
@@ -22,15 +25,16 @@ private:
 											// to point to the current active enemies 
 											// then pass the pointers list to the GUI function
 
+	
 	Enemyheap<MaxEnemyCount> ActiveEnemies[NoOfRegions]; //heap of Active Enemies in REGIONs ABCD
-
 	Enemyqueue<MaxEnemyCount> tobeTested[NoOfRegions];   //all the elements that have been attacked to test if they are dead
 														//if not dead they would be passed to the Active list again
 														//else they would be passed to killed enemies
 	
-	
 	Enemyqueue<MaxEnemyCount> InactiveEnemies; //queue of Inactive Enemies*
 	Enemyqueue<MaxEnemyCount> KilledEnemies;   //queue of kileed Enemies*
+
+
 
 	int TowerInitHealth;
 	int TowerAttackCount;
@@ -38,7 +42,7 @@ private:
 	int countt = 0;
 
 public:
-	
+
 	Battle();
 	Castle * GetCastle();
 	void RunSimulation();
@@ -57,6 +61,7 @@ public:
 	void moveAdjacent(Enemy* e);           //find the adjacent region
 	void revive();                        //if any of the tower is dead the other towers would revive if they health is good 
 												//other-wise towerDeath() is called.
-
+	Enemyheap<MaxEnemyCount>* GetActiveList(int index);
 };
 
+#endif

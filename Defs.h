@@ -27,20 +27,24 @@ enum MODE {
 enum ENEMY_STATE {
 	Frozen,
 	Inaction,
-	Reloading
+	Reloading,
+	KILLED
 };
 
 enum ENEMY_TYPE {
-	FIGHTER=1,
-	FREEZER=2,
-	HEALER=3
+	FIGHTER = 1,
+	FREEZER = 2,
+	HEALER = 3,
+	WEAKEN = 4,
+	COLLECTOR = 5
 };
 
 // The tree tower states 
 enum TOWER_STATE {
 	Active = 0,
 	Freezed = 1,
-	Killed = 2
+	Killed = 2,
+	NoPower = 3
 };
 
 
