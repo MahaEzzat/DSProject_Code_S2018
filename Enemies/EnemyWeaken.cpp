@@ -9,10 +9,15 @@ EnemyWeaken::EnemyWeaken(int id, double t, double h, double Pow, double rld, REG
 
 void EnemyWeaken::Act()
 {
-	double current_power = Tower_Ptr->GetPower();
-	double power_weaken = 0.001*current_power * GetDistance() / (double(MaxDistance));
-	double new_power = current_power - power_weaken;
-	Tower_Ptr->SetPower(new_power);
+	Reloading();
+		if (clockReload == 0)
+		{
+			double current_power = Tower_Ptr->GetPower();
+			double power_weaken = 0.01*current_power * GetDistance() / (double(MaxDistance));
+			double new_power = current_power - power_weaken;
+			Tower_Ptr->SetPower(new_power);
+		}
+	clockReload--;
 }
 
 EnemyWeaken::~EnemyWeaken()

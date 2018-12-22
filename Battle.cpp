@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 Battle::Battle()
 {
@@ -38,15 +39,15 @@ void Battle::AddEnemy_InputFile()
 		string word;
 		//Reading Tower Health
 		loadfile >> word;
-		int TowerInitHealth = stoi(word, 0, 10);
+		TowerInitHealth = stoi(word, 0, 10);
 
 		//Reading Tower Enemies Number
 		loadfile >> word;
-		int TowerAttackCount = stoi(word, 0, 10);
+		TowerAttackCount = stoi(word, 0, 10);
 
 		//Reading Tower Power
 		loadfile >> word;
-		int TowerInitPower = stoi(word, 0, 10);
+		TowerInitPower = stoi(word, 0, 10);
 
 		//setting Towers parameters
 		Tower *Towers = BCastle.getTowers();
@@ -175,29 +176,36 @@ void Battle::DecrementClocks()
 	}
 }
 
+
 void Battle::DecrementDistanceAll()
 {
 	for (int i = 0; i < EnemyCount; i++)
 	{
-		BEnemiesForDraw[i]->Act();
-		BEnemiesForDraw[i]->DecrementDist();
+		if (BEnemiesForDraw[i]->clockIce <= 0 && BEnemiesForDraw[i]->clockReload <= 0)
+		{
+			BEnemiesForDraw[i]->Act();
+			BEnemiesForDraw[i]->DecrementDist();
+		}
 	}
-
 }
 
 void Battle::checkDead(double Time)   //test all the "tobeTested" queues and if the enemy is dead, it moves to dead queues. else the enemy is back to Active elements
 {
 	Tower *Towers = BCastle.getTowers();
-	for (int j = 0; j < NoOfRegions;j++)
+	for (int j = 0; j < NoOfRegions; j++)
 	{
 		while (!tobeTested[j].IsEmpty())
 		{
-			Enemy* e; 
+			Enemy* e = NULL;
 			tobeTested[j].Dequeue(e);
 			e->SetFST(Time);
 			if (e->isKilled())
 			{
 				e->SetKTS(Time);
+				double kd_time = e->GetKTS() - e->GetFirst_shoot_time();
+				e->SetKD(kd_time);                  
+				double lt_time = e->GetFD() + e->GetKD();
+				e->SetLT(lt_time);
 				KilledEnemies.Enqueue(e);
 				Towers[j].IncrementKilledEnemies();
 				DecrementEnemiesCount(e);
@@ -205,11 +213,10 @@ void Battle::checkDead(double Time)   //test all the "tobeTested" queues and if 
 			else
 			{
 				ActiveEnemies[j].Enqueue(e);
-				
+
 			}
-			Towers[j].SetEnemiesNumber(ActiveEnemies[j].GetSize() + 1);
+			Towers[j].SetEnemiesNumber(ActiveEnemies[j].GetSize());
 		}
-	
 	}
 }
 
@@ -239,9 +246,9 @@ void Battle::towerDeath()
 		{	
 			Enemy *e = ActiveEnemies[i].Dequeue();
 			REGION current;
-			if (e != NULL)
+			if (e != nullptr)
 			{
-				while (e != NULL)
+				while (e != nullptr)
 				{
 					moveAdjacent(e);
 					current = e->GetRegion();
@@ -272,10 +279,7 @@ void Battle::moveAdjacent(Enemy* e)
 				
 }
 
-/*
-    We would loop over the towers and if any is dead and any of towers has a health over 35% it will give the dead tower 10% of their health 
-	else the tower is not revived
-*/
+
 void Battle::revive()
 {
 	Tower* towers = BCastle.getTowers();
@@ -302,20 +306,81 @@ void Battle::revive()
 }
 
 
+
+
 void Battle::RunSimulation()
 {
-	InputGenerator(); //Generate Input file
 	int x;
+	int y;
 	cout << "Please Enter 0 for interactive mode or 1 for silent mode: ";
 	cin >> x;
+	cout << "Choose The difficulity of the Game" << endl << endl;
+	cout << "1-Easy\n\n2-Medium\n\n3-Hard\n\n";
+	cin >> y;
+	InputGenerator(y);
 	if (x == INTERACTIVE)
 		Simulation();
 	else
 		Silent();
 }
 
+
+
 void Battle::OutPut()
 {
+	ofstream outfile;
+	outfile.open("Output_file.txt");
+	outfile << "KTS" <<"\t" << "S" << "\t" << "FD" << "\t" << "KD" << "\t"  << "LT" << endl;
+	double killedenemies_counter = KilledEnemies.GetSize();
+	Enemy* tobeprinted = NULL;
+	double sum_fd = 0;
+	double sum_kd = 0;
+	for (int i = 0; i < killedenemies_counter; i++)
+	{
+		KilledEnemies.Dequeue(tobeprinted);
+		
+		outfile << tobeprinted->GetKTS() << "\t" << tobeprinted->GetId() << "\t" << tobeprinted->GetFD() << "\t" << tobeprinted->GetKD() << "\t" << tobeprinted->GetLT() << endl;
+
+		sum_fd += tobeprinted->GetFD();
+		sum_kd += tobeprinted->GetKD();
+	}
+	outfile << " T1_Total_Damage"<<  "\t\t"  << "T2_Total_Damage" << "\t\t" << "T3_Total_Damage" << "\t\t" <<"T4_Total_Damage" << endl;
+	Tower* tw = BCastle.getTowers();
+	double total_health = 0;
+	outfile << "\t";
+	for (int j = 0; j < NoOfRegions; j++)
+	{
+		double final_health = tw[j].GetHealth();
+		double damage = TowerInitHealth - final_health;
+		outfile << damage << "\t\t\t";
+		total_health+= tw[j].GetHealth();
+	}
+	outfile << endl;
+
+	if (killedenemies_counter == 300)       // Win when all the enemies are killed
+	{
+		outfile << " Game is WiN" << endl;
+		outfile << "Total Enemies = " << killedenemies_counter << endl;
+
+	}
+	else if ((total_health == 0) || (tw[0].GetState() == NoPower && tw[1].GetState() == NoPower && tw[2].GetState() == NoPower && tw[3].GetState() == NoPower))
+		// Loss when all the towers are killed
+	{
+		outfile << "Game is LOSS" << endl;
+		outfile << "Number of killed Enemies = " << killedenemies_counter << endl;
+		outfile << "Number of alive enemies = " << (300 - killedenemies_counter) << endl;
+
+	}
+	else
+	{
+		outfile << "Game is DROWN" << endl;
+		outfile << " Number of killed Enemies = " << killedenemies_counter << endl;
+		outfile << "Number of alive enemies = " << (300 - killedenemies_counter) << endl;
+
+	}
+	outfile << "Averge First shoot delay = " << (sum_fd / killedenemies_counter) << endl;
+	outfile << "Avergy kill delay = " << (sum_kd / killedenemies_counter) << endl;
+	outfile.close();
 
 }
 
@@ -344,28 +409,35 @@ void Battle::Simulation()
 	
 		for (int j = 0; j < NoOfRegions; j++)
 		{
-			if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
-				enemies_counter = Towers[j].GetattackCapacity();
-			else
-				enemies_counter = ActiveEnemies[j].GetSize() + 1;
+			
+				if (ActiveEnemies[j].GetSize()  > Towers[j].GetattackCapacity())
+					enemies_counter = Towers[j].GetattackCapacity();
+				else
+					enemies_counter = ActiveEnemies[j].GetSize() ;
 
-			for (int i = 0; i < enemies_counter; i++)
-			{
-				Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
-				if (tobeAttacked != NULL)
+				for (int i = 0; i < enemies_counter; i++)
 				{
-					Towers[j].attack(tobeAttacked);
-					tobeTested[j].Enqueue(tobeAttacked);
+					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
+					if (tobeAttacked != nullptr)
+					{
+						if (tobeAttacked->GetIs_attacked() == false)
+						{
+							tobeAttacked->SetIs_attacked();
+							tobeAttacked->SetFirst_shoot_time(x);  // to record the first shoot time
+							double first_shot_delay = x - tobeAttacked->GetArrivalTime();
+							tobeAttacked->SetFD(first_shot_delay);   // recorded FD
+						}
+						Towers[j].attack(tobeAttacked);
+						tobeTested[j].Enqueue(tobeAttacked);
+					}
 				}
-			}
+			
 		}
 
 		checkDead(x); //Remove ememies from Active list to killed list if it's dead
-
 		revive(); 
-		       
 		pGUI->DrawBattle(BEnemiesForDraw, EnemyCount);
-		DecrementDistanceAll();
+		
 
 		int ActiveEnemiesNumber = 0;
 		int KilledEnemiesNumber = 0;
@@ -400,6 +472,7 @@ void Battle::Simulation()
 		
 		pGUI->PrintMessage(msg);
 		pGUI->GetPointClicked(p);
+		DecrementDistanceAll();
 		KilledEnemies.SortFD();
 
 		x++;
@@ -413,7 +486,7 @@ void Battle::Simulation()
 			IsEnd = true;
 			GameResult = "LOSE";
 		}
-		else if (ActiveEnemies[0].GetSize() == -1 && ActiveEnemies[1].GetSize() == -1 && ActiveEnemies[2].GetSize() == -1 && ActiveEnemies[3].GetSize() == -1)
+		else if (ActiveEnemies[0].GetSize() == 0 && ActiveEnemies[1].GetSize() == 0 && ActiveEnemies[2].GetSize() == 0 && ActiveEnemies[3].GetSize() == 0)
 		{
 			IsEnd = true;
 			GameResult = "WIN";
@@ -423,6 +496,7 @@ void Battle::Simulation()
 	string msg = "This is the end of the game, and the result is: " + GameResult + " Press Mouse Click To exit";
 	pGUI->PrintMessage(msg);
 	pGUI->GetPointClicked(p);
+	OutPut();
 }
 
 void Battle::Silent()
@@ -441,20 +515,29 @@ void Battle::Silent()
 
 		for (int j = 0; j < NoOfRegions; j++)
 		{
-			if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
-				enemies_counter = Towers[j].GetattackCapacity();
-			else
-				enemies_counter = ActiveEnemies[j].GetSize() + 1;
+		
+				if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
+					enemies_counter = Towers[j].GetattackCapacity();
+				else
+					enemies_counter = ActiveEnemies[j].GetSize() + 1;
 
-			for (int i = 0; i < enemies_counter; i++)
-			{
-				Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
-				if (tobeAttacked != NULL)
+				for (int i = 0; i < enemies_counter; i++)
 				{
-					Towers[j].attack(tobeAttacked);
-					tobeTested[j].Enqueue(tobeAttacked);
+					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
+					if (tobeAttacked != nullptr)
+					{
+						if (tobeAttacked->GetIs_attacked() == false)
+						{
+							tobeAttacked->SetIs_attacked();
+							tobeAttacked->SetFirst_shoot_time(x);  // to record the first shoot time
+							double first_shot_delay = x - tobeAttacked->GetArrivalTime();
+							tobeAttacked->SetFD(first_shot_delay);   // recorded FD
+						}
+						Towers[j].attack(tobeAttacked);
+						tobeTested[j].Enqueue(tobeAttacked);
+					}
 				}
-			}
+			
 		}
 
 		checkDead(x); //Remove ememies from Active list to killed list if it's dead

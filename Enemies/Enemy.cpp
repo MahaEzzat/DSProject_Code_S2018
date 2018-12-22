@@ -74,15 +74,16 @@ double Enemy::GetKD() const
 }
 void Enemy::SetFD(double fd)
 {
+	// fd = GetFST() - GetArrivalTime();
 	FD = fd;
 }
 void Enemy::SetFST(double Time)
 {
-	if (FST > Time)
-	{
+	//if (FST > Time)
+	//{
 		FST = Time;
-		SetFD(FST - T);
-	}
+		//SetFD(FST - T);
+	//}
 }
 double Enemy::GetFST() const
 {
@@ -100,7 +101,7 @@ double Enemy::GetPriority() const
 
 void Enemy::CalPriority() //Calculating Priority with Normilized Parameters with equal weignts
 {
-	priority = (Health / 100.0)*(1.0/3) + (power / 100.0)*(1.0/3) + (float(MinDistance) /distance)*(1.0/3);
+	priority = (Health / 170.0)*(1.0/3) + (power / 170.0)*(1.0/3) + (float(MinDistance) /distance)*(2.0/3);
 }
 // function to get the power of the enemy
 double Enemy::GetPower()
@@ -192,8 +193,8 @@ double Enemy::GetKTS() const
 void Enemy::SetKTS(double Time)
 {
 	KTS = Time;
-	SetKD(KTS-FST);
-	SetLT(KTS-T);
+	//SetKD(KTS-FST);
+	//SetLT(KTS-T);
 }
 double Enemy::GetLT() const
 {
@@ -218,4 +219,21 @@ void Enemy::SetHealth(double h)
 double Enemy::GetOriginalHealth()
 {
 	return original_health;
+}
+
+void Enemy::SetIs_attacked()
+{
+	is_attacked = true;
+}
+bool Enemy::GetIs_attacked()
+{
+	return is_attacked;
+}
+void Enemy::SetFirst_shoot_time(double timestep)
+{
+	first_shoot_time = timestep;
+}
+double Enemy::GetFirst_shoot_time()
+{
+	return first_shoot_time;
 }

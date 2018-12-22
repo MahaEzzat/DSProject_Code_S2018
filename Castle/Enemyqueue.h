@@ -113,3 +113,4 @@ int Enemyqueue<Array_Size>::GetSize()
 {
 	return size;
 }
+

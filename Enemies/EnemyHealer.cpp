@@ -17,7 +17,7 @@ void EnemyHealer::Act()
 
 	Enemyheap<MaxEnemyCount> *ActiveEnemies_copy = Tower_Ptr->GetCastlePtr()->GetBattlePtr()->GetActiveList(GetRegion());
 	Enemy* healed_enemy = ActiveEnemies_copy->Dequeue(); // note: performing dequeue to enable us to access the enemy class items
-	Enemy *Enemy_Array[Array_size];
+	Enemy *Enemy_Array[MaxEnemyCount];
 
 	int k = 0;
 	double health_increase = 2;

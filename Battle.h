@@ -55,7 +55,6 @@ public:
 	void checkDead(double Time);
 	void OutPut();
 	void DecrementEnemiesCount(Enemy* e);
-
 	void towerDeath();                    //if tower is dead the enemies would move to the adjacent region
 	                                                  //A->B->c->D->A
 	void moveAdjacent(Enemy* e);           //find the adjacent region

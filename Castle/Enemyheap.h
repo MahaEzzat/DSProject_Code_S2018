@@ -27,7 +27,7 @@ public:
 template <int const MAX_HEAP_SIZE>
 Enemyheap<MAX_HEAP_SIZE>::Enemyheap()
 {
-	size = -1;
+	size = 0;
 }
 
 //---------------------------------------
@@ -56,9 +56,9 @@ void Enemyheap<MAX_HEAP_SIZE>::ReheapDown(int root)
 	// Check base case in recursive calls.  If leftChild's index is less
 	// than or equal to the bottom index we have not finished recursively 
 	// reheaping.
-	if (leftChild_index <= size)
+	if (leftChild_index <= (size-1))
 	{
-		if (leftChild_index == size)          // If this root has no right child then 
+		if (leftChild_index == (size-1))          // If this root has no right child then 
 		{
 			maxChild_index = leftChild_index;     //     leftChild must hold max key
 		}
@@ -92,7 +92,7 @@ void Enemyheap<MAX_HEAP_SIZE>::ReheapUp(int child_index)
 
 	// Check base case in recursive calls.  If bottom's index is greater
 	// than the root index we have not finished recursively reheaping.
-	if (size > 0)
+	if (child_index > 0)
 	{
 		parent_index = (child_index - 1) / 2;
 		if (Elements[parent_index]->GetPriority() < Elements[child_index]->GetPriority())
@@ -113,11 +113,11 @@ void Enemyheap<MAX_HEAP_SIZE>::ReheapUp(int child_index)
 template <int const MAX_HEAP_SIZE>
 bool Enemyheap<MAX_HEAP_SIZE>::Enqueue(Enemy *item)
 {
-	if (size < MAX_HEAP_SIZE)
+	if (size < MAX_HEAP_SIZE && item != nullptr)
 	{
-		size++;
 		Elements[size] = item; // Copy item into array
-		ReheapUp(0);
+		ReheapUp(size);
+		size++;
 		return true;
 	}
 	return false;
@@ -129,15 +129,16 @@ bool Enemyheap<MAX_HEAP_SIZE>::Enqueue(Enemy *item)
 template <int const MAX_HEAP_SIZE>
 Enemy *Enemyheap<MAX_HEAP_SIZE>::Dequeue()
 {
-	if (size == -1)
-		return NULL;
+	if (size <= 0)
+		return nullptr;
+
 	Enemy *temp = Elements[0];
-	// Copy last item into root
-	Elements[0] = Elements[size];
-	Elements[size] = NULL;
 	size--;
-	// Reheap the tree
-	ReheapDown(0);
+	// Copy last item into root
+		Elements[0] = Elements[size];
+
+		// Reheap the tree
+		ReheapDown(0);
 	return temp;
 }
 

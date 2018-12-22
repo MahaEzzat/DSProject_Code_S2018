@@ -30,13 +30,13 @@ public:
 	void SetHealth(double h);
 	double GetHealth() const;
 	void SetPower(double Power);
+	int clockIcee = 0;
 	void SetRegion(int x);
 	double GetPower() const;
 	void SetEnemiesNumber(int EnemiesNumber);
 	int GetEnemiesNumber() const;
 	void IncrementKilledEnemies();
 	int GetKilledEnemiesNumber() const;
-	void Icing(double h);
 	void Damaged(double h);
 	TOWER_STATE GetState();
 	void SetattackCapacity(int attack_number);

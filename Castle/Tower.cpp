@@ -36,12 +36,12 @@ void Tower::CountIce(double icebullet)
 
 	sum_of_ice = sum_of_ice + icebullet;
 
-	if (icebullet >= (Health *(20.0 / 100.0)))
+	if (sum_of_ice >= (Health *0.1))
 	{
-		//freez();   // function to freez the tower
+		clockIcee = 1;
+		state = Freezed;
+		sum_of_ice = 0;
 	}
-
-
 }
 
 double Tower::GetHealth() const
@@ -83,14 +83,7 @@ TOWER_STATE Tower::GetState()
 	return state;
 }
 
-void Tower::Icing(double h)
-{
-	freezed = freezed + h;
-	if (freezed >= Health * 0.2) //tower is weak so it gets frozen fast
-	{
-		state = Freezed;
-	}
-}
+
 void Tower::Damaged(double h)
 {
 	Health = Health - h;
@@ -110,15 +103,22 @@ void Tower::SetRegion(int x)
 
 void Tower::attack(Enemy* e)
 {
+	srand(time(0));
+	int x = rand() % 100;
+
+	if (clockIcee == 0)
+		state = Active;
+
+	if (state == Freezed)
+		clockIcee--;
+
 	if (state == Active)
 	{
-		srand(time(0));
-		int x =  rand() % 100;
 		int distance = e->GetDistance();
 		double bulletHealer = (Power * (1.0 / distance)) / 2.0;
 		double bulletFire = (Power * (1.0 / distance));
 
-		if (20 <= x && x < 100) // the tower shoots fire
+		if ( x >= 20 ) // the tower shoots fire
 		{
 
 			if ((e->GetType() == FIGHTER) || (e->GetType() == FREEZER))
@@ -139,13 +139,13 @@ void Tower::attack(Enemy* e)
 			}
 		}
 		//in case the tower shoots ice on enemies 
-		else if (0 <= x && x < 20)
+		else 
 		{
-			//e->frozen();
+			e->frozen();
 		}
 	}
-
 }
+
 void Tower::SetattackCapacity(int attack_number)
 {
 	attackCapacity = attack_number;

@@ -8,17 +8,16 @@
 #include "Defs.h"
 
 using namespace std;
-void InputGenerator()
+
+void InputGenerator(int factor)
 {
 	ofstream output;
 	output.open("input.txt");
 	srand(time(0));
-	int maxNo = 20 + rand() % (20);
-	double startPower = 300 + rand() % (60 - 10 + 1);
-	output << to_string(MaxEnemyCount) << "\t" << maxNo << "\t" << startPower << endl;
-	//<=20% are healers
-	//>=80% are fighters
-	//there are 300 enemies
+	int maxNo = 5 + rand() % (20);
+	int startPower = (250 + rand() % (60 - 10 + 1)) * (factor);
+	int InitialHealth = 1500 * factor;
+	output << InitialHealth << "\t" << maxNo << "\t" << startPower << endl;
 	int noHealers = 0;
 	int noFighters = 0;
 	vector<int> randomRoles;
@@ -41,12 +40,10 @@ void InputGenerator()
 			randomRoles.push_back(1);
 		}
 	}
-	//now we have our randomized list of enemies
-	//now we need to spread them in between different regions evenly -but not so evenly- :")) for each region
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
 		int x = rand() % (100);
-		if (0<= x && x < 25)
+		if (0 <= x && x < 25)
 		{
 			randomPlace.push_back('A');          //Region A
 		}
@@ -63,19 +60,17 @@ void InputGenerator()
 			randomPlace.push_back('D');         //Region D
 		}
 	}
-	//now we have almost randomized list of the enemies places
-	//now we need to give them almost randomized health with at least initial health of 65 and maximum health of 100
+
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
-		int x = 1 + rand() % (35);
-		randomHealth.push_back(65 + x);
+		int x = 1 + rand() % (50);
+		randomHealth.push_back(150 + x);
 
 	}
-	//now we need to do the same to the power of the enemies with at least power of 70 and maximum power of 100
 	for (int i = 1; i <= MaxEnemyCount; i++)
 	{
-		int x = 1 + rand() % (15);
-		randomPower.push_back(x);
+		int x = 1 + rand() % (50);
+		randomPower.push_back(150 + x);
 	}
 	//randomized reload time with at least 1 time step reload time and 4 as maximum
 	for (int i = 1; i <= MaxEnemyCount; i++)

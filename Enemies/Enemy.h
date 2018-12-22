@@ -30,23 +30,27 @@ protected:
 	double Health;	//Enemy health
 	double original_health;   //Enemy original health
 	double power;   //Enemy attack power
-	double LT;      //Enemy Life time 
-	double KTS;		//Enemy Killed Time
-	double FST;		//Enemy Fist-shot Time
-	double KD;      //Enemy Killed Time delay
-	double FD;      //Enemy First-shot delay
-	double T;       //Enemy Arrival time
+	double LT =0;      //Enemy Life time 
+	double KTS=0;		//Enemy Killed Time
+	double FST = 0;		//Enemy Fist-shot Time
+	double KD= 0;      //Enemy Killed Time delay
+	double FD =0;      //Enemy First-shot delay
+	double T= 0;       //Enemy Arrival time
 	double RLD;     //Enemy reload period
 	                //We Would Make The Enemy Reload Every 5 steps
 	ENEMY_TYPE type;
 	ENEMY_STATE state;          //Enemy State (Frozen,Inaction,Reloading)
-	int clockIce;				//Clock for freezed time
-	int clockReload;             //Clock for reload time
+
 	int steps = 0;              //Counting the Enemy Steps 
 	Tower* Tower_Ptr;
+	bool is_attacked = false;   // Flag show if it is the first time to bbe attacked or not
+	double first_shoot_time;     // to store the first time shoot.
 public:
 	Enemy(int id, double t, double h, double Pow, double rld, REGION r_region, ENEMY_TYPE typee, Tower* ptr);
 	 ~Enemy();
+
+	 int clockIce;				//Clock for freezed time
+	 int clockReload;             //Clock for reload time
 	color GetColor() const;
 	REGION GetRegion() const;
 	void DecrementDist();
@@ -79,6 +83,10 @@ public:
 	double GetPower();
 	void SetHealth(double h);
 	virtual void Act() = 0;
+	void SetFirst_shoot_time(double timestep);
+	double GetFirst_shoot_time();
+	void SetIs_attacked();
+	bool GetIs_attacked();
 
 	//
 

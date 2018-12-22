@@ -9,8 +9,13 @@ EnemyFreezer::EnemyFreezer(int id, double t, double h, double Pow, double rld, R
 
 void EnemyFreezer::Act()
 {
-	double ice_bullet = 5;
-	Tower_Ptr->CountIce(ice_bullet);
+	Reloading();
+	if (clockReload == 0)
+	{
+		double ice_bullet = 5;
+		Tower_Ptr->CountIce(ice_bullet);
+	}
+	clockReload--;
 }
 
 
