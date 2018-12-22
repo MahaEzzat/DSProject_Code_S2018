@@ -14,7 +14,7 @@ void InputGenerator(int factor)
 	ofstream output;
 	output.open("input.txt");
 	srand(time(0));
-	int maxNo = 5 + rand() % (20);
+	int maxNo = 10 + rand() % (10);
 	int startPower = (250 + rand() % (60 - 10 + 1)) * (factor);
 	int InitialHealth = 1500 * factor;
 	output << InitialHealth << "\t" << maxNo << "\t" << startPower << endl;

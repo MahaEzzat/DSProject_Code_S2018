@@ -359,7 +359,7 @@ void Battle::OutPut()
 
 	if (killedenemies_counter == 300)       // Win when all the enemies are killed
 	{
-		outfile << " Game is WiN" << endl;
+		outfile << "Game is WiN" << endl;
 		outfile << "Total Enemies = " << killedenemies_counter << endl;
 
 	}
@@ -504,8 +504,9 @@ void Battle::Silent()
 	Tower *Towers = BCastle.getTowers();
 
 	AddEnemy_InputFile();
+	bool IsEnd = false;
 
-	int x = 0;
+	double x = 0;
 	do
 	{
 		ActivatedEnemies(x);
@@ -515,37 +516,50 @@ void Battle::Silent()
 
 		for (int j = 0; j < NoOfRegions; j++)
 		{
-		
-				if (ActiveEnemies[j].GetSize() + 1 > Towers[j].GetattackCapacity())
-					enemies_counter = Towers[j].GetattackCapacity();
-				else
-					enemies_counter = ActiveEnemies[j].GetSize() + 1;
 
-				for (int i = 0; i < enemies_counter; i++)
+			if (ActiveEnemies[j].GetSize()  > Towers[j].GetattackCapacity())
+				enemies_counter = Towers[j].GetattackCapacity();
+			else
+				enemies_counter = ActiveEnemies[j].GetSize();
+
+			for (int i = 0; i < enemies_counter; i++)
+			{
+				Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
+				if (tobeAttacked != nullptr)
 				{
-					Enemy* tobeAttacked = ActiveEnemies[j].Dequeue();
-					if (tobeAttacked != nullptr)
+					if (tobeAttacked->GetIs_attacked() == false)
 					{
-						if (tobeAttacked->GetIs_attacked() == false)
-						{
-							tobeAttacked->SetIs_attacked();
-							tobeAttacked->SetFirst_shoot_time(x);  // to record the first shoot time
-							double first_shot_delay = x - tobeAttacked->GetArrivalTime();
-							tobeAttacked->SetFD(first_shot_delay);   // recorded FD
-						}
-						Towers[j].attack(tobeAttacked);
-						tobeTested[j].Enqueue(tobeAttacked);
+						tobeAttacked->SetIs_attacked();
+						tobeAttacked->SetFirst_shoot_time(x);  // to record the first shoot time
+						double first_shot_delay = x - tobeAttacked->GetArrivalTime();
+						tobeAttacked->SetFD(first_shot_delay);   // recorded FD
 					}
+					Towers[j].attack(tobeAttacked);
+					tobeTested[j].Enqueue(tobeAttacked);
 				}
-			
+			}
+
 		}
 
 		checkDead(x); //Remove ememies from Active list to killed list if it's dead
 		revive();
 		DecrementDistanceAll();
-		
 		KilledEnemies.SortFD();
+
 		x++;
-	} while (x != 3*MaxTimeStep);
+		if (Towers[0].GetState() == Killed && Towers[1].GetState() == Killed && Towers[2].GetState() == Killed && Towers[3].GetState() == Killed)
+		{
+			IsEnd = true;
+		}
+		else if (Towers[0].GetState() == NoPower && Towers[1].GetState() == NoPower && Towers[2].GetState() == NoPower && Towers[3].GetState() == NoPower)
+		{
+			IsEnd = true;
+		}
+		else if (ActiveEnemies[0].GetSize() == 0 && ActiveEnemies[1].GetSize() == 0 && ActiveEnemies[2].GetSize() == 0 && ActiveEnemies[3].GetSize() == 0)
+		{
+			IsEnd = true;
+		}
+
+	} while ((x != 3 * MaxTimeStep) && !IsEnd);
 	OutPut();
 }
